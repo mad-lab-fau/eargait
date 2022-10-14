@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Seifer"
+  given-names: "Ann-Kristin"
+  orcid: "https://orcid.org/0000-0002-5891-218X"
+- family-names: "Küderle"
+  given-names: "Arne"
+  orcid: "https://orcid.org/0000-0002-5686-281X"
+- family-names: "Eskofier"
+  given-names: "Bjoern M."
+  orcid: "https://orcid.org/0000-0002-0417-0336"
+title: "eargait - The Gait Analysis Package for Ear-Worn IMU Sensors"
+version: 0.1.0
+url: "https://github.com/mad-lab-fau/eargait"
+
+preferred-citation:
+  type: article
+  authors:
+  - family-names: "Seifer"
+    given-names: "Ann-Kristin"
+    orcid: "https://orcid.org/0000-0002-5891-218X"
+  - family-names: "Küderle"
+    given-names: "Arne"
+    orcid: "https://orcid.org/0000-0002-5686-281X"
+  - family-names: "Eskofier"
+    given-names: "Bjoern M."
+    orcid: "https://orcid.org/0000-0002-0417-0336"
+  doi: to be done
+  journal: "To be done"
+  start: XX
+  title:"eargait - The Gait Analysis Package for Ear-Worn IMU Sensors"
+  issue: XX
+  volume: X
+  year: 2022

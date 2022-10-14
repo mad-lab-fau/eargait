@@ -1,0 +1,91 @@
+[tool.poetry]
+name = "eargait"
+version = "0.2.0"
+description = "*Eargait* provides a set of algorithms and functions to process IMU data recorded with ear-worn IMU sensors and to estimate characteristic gait parameters. "
+authors = ["Ann-Kristin Seifer <ann-kristin.seifer@fau.de>",
+            "Arne Küderle <arne.kuederle@fau.de>"]
+readme = "README.md"
+homepage = "https://github.com/mad-lab-fau/eargait"
+repository = "https://github.com/mad-lab-fau/eargait"
+
+[tool.poetry.dependencies]
+python = ">=3.8,<3.10"
+joblib = "^1.1.0"
+scikit-learn = "1.0.2"
+numpy = "^1"
+pandas = "^1"
+typing-extensions = ">=4.1.1"
+tpcp = ">=0.6.3, <1.0.0"
+scipy = "^1, !=1.6.0"
+
+pyts = "^0.11.0"
+nilspodlib = "^3.2.2"
+fau-colors = "^1.0.1"
+plotly = "^5.3.1"
+statsmodels = "^0.13.0"
+cufflinks = "^0.17.3"
+
+[tool.poetry.dev-dependencies]
+#signialib = {path="/Users/ann-kristinseifer/Documents/code/signialib", develop=true}
+signialib = {git="https://mad-srv.informatik.uni-erlangen.de/qu94hoxi/signialib.git"}
+pytest = "^6.2.1"
+pytest-cov = "^2.8.1"
+prospector = "^1.7.7"
+black = "^22.3.0"
+isort = "^5.10.1"
+poethepoet = "^0.10.0"
+pyright = "^1.1.230"
+numpydoc = "^1.4.0"
+sphinx-gallery = "^0.11.1"
+pydata-sphinx-theme = "^0.9.0"
+recommonmark = "^0.7.1"
+memory-profiler = "^0.58.0"
+matplotlib = "^3.4.3"
+toml = "^0.10.2"
+Sphinx = "^5.1.1"
+
+[tool.black]
+line-length = 120
+target-version = ['py37']
+exclude = '''
+(
+  /(
+      \.eggs         # exclude a few common directories in the
+    | \.git          # root of the project
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | docs
+    | build
+    | dist
+    | \.virtual_documents
+  )/
+)
+'''
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 120
+skip_gitignore = true
+
+[tool.poe.tasks]
+_format_black = "black ."
+_format_isort = "isort ."
+format = ["_format_black", "_format_isort"]
+lint = { cmd = "prospector", help = "Lint all files with Prospector." }
+_check_black = "black . --check"
+_check_isort = "isort . --check"
+check = { sequence = ["_check_black", "_check_isort", "lint"], help = "Check all potential format and linting issues.", ignore_fail = false }
+test = { cmd = "pytest --cov=tpcp --cov-report=term-missing --cov-report=xml", help = "Run Pytest with coverage." }
+docs = { "script" = "_tasks:task_docs()",  help = "Build the html docs using Sphinx." }
+bump_version = { "script" = "_tasks:task_update_version()" }
+
+[tool.pyright]
+pythonVersion = "3.7"
+
+[build-system]
+requires = ["poetry_core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
