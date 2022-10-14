@@ -26,8 +26,7 @@ statsmodels = "^0.13.0"
 cufflinks = "^0.17.3"
 
 [tool.poetry.dev-dependencies]
-#signialib = {path="/Users/ann-kristinseifer/Documents/code/signialib", develop=true}
-signialib = {git="https://mad-srv.informatik.uni-erlangen.de/qu94hoxi/signialib.git"}
+#signialib = {git="https://mad-srv.informatik.uni-erlangen.de/qu94hoxi/signialib.git"}
 pytest = "^6.2.1"
 pytest-cov = "^2.8.1"
 prospector = "^1.7.7"
