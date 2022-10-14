@@ -44,7 +44,7 @@ def update_version(version):
         .strip()
         .split(" ", 1)[1]
     )
-    update_version_strings(HERE.joinpath("tpcp/__init__.py"), new_version)
+    update_version_strings(HERE.joinpath("eargait/__init__.py"), new_version)
 
 
 def task_update_version():
