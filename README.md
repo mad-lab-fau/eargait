@@ -3,6 +3,7 @@
 [![Test and Lint](https://github.com/mad-lab-fau/eargait/actions/workflows/test-and-lint.yml/badge.svg?branch=main)](https://github.com/mad-lab-fau/eargait/actions/workflows/test-and-lint.yml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/eargait)
+[![docs](https://img.shields.io/badge/docs-online-green.svg)](http://MadLab.mad-pages.informatik.uni-erlangen.de/qu94hoxi/eargait/README.html)
 
 # Eargait - The Gait Analysis Package for Ear-Worn IMU Sensors !
 
@@ -13,7 +14,6 @@ analyze your IMU data recorded with hearing aid integrated IMU sensors.
 
 <center> <img src=./docs/_static/logo/WalkingHearingAid.pdf height="200"/></center>
 
-[![docs](https://img.shields.io/badge/docs-online-green.svg)](http://MadLab.mad-pages.informatik.uni-erlangen.de/qu94hoxi/eargait/README.html)
 (Link for docs online is currently not working)
 ## Getting started
 
