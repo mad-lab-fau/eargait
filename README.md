@@ -10,19 +10,18 @@
 *Eargait* provides a set of algorithms and functions to process IMU data recorded with ear-worn IMU sensors and to 
 estimate characteristic gait parameters. 
 
-analyze your IMU data recorded with hearing aid integrated IMU sensors.
-
 <center> <img src=./docs/_static/logo/WalkingHearingAid.pdf height="200"/></center>
 
-(Link for docs online is currently not working)
+This project is 
+
 ## Getting started
 
 ### Prerequisites
-*Eargait* only supports Python 3.7 and newer.
+*Eargait* only supports Python 3.8 and newer.
 First, install a compatible version of Python.
 
 ### Set up athe the virtual environment
-We recommend installing the packages in a virtual environment (e.g. conda/Anaconda).
+We recommend installing the packages in a virtual environment (e.g. conda/Anaconda/miniconda).
 For more information regarding Anaconda, please visit [Anaconda.com](https://docs.anaconda.com/anaconda/install/index.html). <br />
 If you want to install the packages directly on the local python version, directly go to [Install Packages](#install-packages)  <br />
 
@@ -134,8 +133,24 @@ by calling
 poetry run poe <command name>
 ```
 
+
+## Citing Eargait
+
+If you use `Eargait` in your work, please report the version you used in the text. Additionally, please also cite the corresponding paper:
+
+```
+Seifer et al., (2022). TODO:, https://doi.org/TODO
+```
+
+
+## Acknowledgement
+
+Eargait is part of a research project from the Machine Learning and Data Analytics Lab, Friedrich-Alexander Universität Erlangen-Nürnberg. The authors thank WS Audiology, Erlangen, Germany and Lynge, Denmark for funding the work and their support which made this contribution possible.
+
+
 ## Contribution
 
 The entire development is managed via [GitHub](https://github.com/mad-lab-fau/eargait).
 If you run into any issues, want to discuss certain decisions, want to contribute features or feature requests, just 
 reach out to us by [opening a new issue](https://github.com/mad-lab-fau/eargait/issues/new/choose).
+

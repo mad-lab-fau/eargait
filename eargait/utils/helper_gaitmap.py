@@ -938,7 +938,7 @@ def _get_static_acc_vector(
             data[SF_GYR].to_numpy(), window_length - 5, static_signal_th + 0.5, metric
         )
         if not any(static_bool_array):
-            raise Warning(
+            warnings.warn(
                 "No static windows could be found to extract sensor offset orientation. Please check your input data or try"
                 " to adapt parameters like window_length, static_signal_th or used metric."
             )
@@ -1316,7 +1316,8 @@ def align_dataset_to_gravity(
             # get rotation to gravity
             rotation = get_gravity_rotation(acc_vector, gravity)
         else:
-            raise Warning("Align to gravity was ignored as not static vector is available.")
+            warnings.warn("Align to gravity was ignored as not static vector is available.")
+            return dataset
     else:
         # build dict with static acc vectors for each sensor in dataset
         acc_vector = {
@@ -1324,6 +1325,9 @@ def align_dataset_to_gravity(
             for name in get_multi_sensor_names(dataset)
         }
         # build rotation dict for each dataset from acc dict and gravity
+        if any([v is None for v in acc_vector.values()]):
+            warnings.warn("Align to gravity was ignored as not static vector is available.")
+            return dataset
         rotation = {name: get_gravity_rotation(acc_vector[name], gravity) for name in get_multi_sensor_names(dataset)}
     return rotate_dataset(dataset, rotation)
 

@@ -17,16 +17,15 @@ pandas = "^1"
 typing-extensions = ">=4.1.1"
 tpcp = ">=0.6.3, <1.0.0"
 scipy = "^1, !=1.6.0"
-
 pyts = "^0.11.0"
 nilspodlib = "^3.2.2"
 fau-colors = "^1.0.1"
 plotly = "^5.3.1"
 statsmodels = "^0.13.0"
 cufflinks = "^0.17.3"
+signialib = "^1.0.0"
 
 [tool.poetry.dev-dependencies]
-#signialib = {git="https://mad-srv.informatik.uni-erlangen.de/qu94hoxi/signialib.git"}
 pytest = "^6.2.1"
 pytest-cov = "^2.8.1"
 prospector = "^1.7.7"

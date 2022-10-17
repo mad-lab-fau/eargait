@@ -1,9 +1,9 @@
 """A set of functions to rotate and transform ear-worn sensor data."""
+import warnings
 from typing import Dict, Union
 
 import numpy as np
 from nilspodlib import SyncedSession
-from signialib import Session
 
 from eargait.utils.consts import SF_COLS
 from eargait.utils.helper_gaitmap import (
@@ -15,6 +15,12 @@ from eargait.utils.helper_gaitmap import (
     rotate_dataset,
     rotation_from_angle,
 )
+
+try:
+    from signialib import Session
+except ModuleNotFoundError:
+    Session = SyncedSession
+    warnings.warn("Python packe 'Signialib' is not installed.")
 
 
 def convert_ear_to_ebf(session: Union[Session, SyncedSession]) -> MultiSensorData:
@@ -126,7 +132,6 @@ def _get_rot_matrix_default():
 
 
 def _get_rot_matrix_d12():
-    print("D12")
     rot_matrices = {}
     rot_matrices["left"] = rotation_from_angle(np.array([1, 0, 0]), np.deg2rad(-90)) * rotation_from_angle(
         np.array([0, 1, 0]), np.deg2rad(-90)

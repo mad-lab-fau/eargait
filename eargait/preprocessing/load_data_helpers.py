@@ -4,7 +4,6 @@ import warnings
 from pathlib import Path
 
 import numpy as np
-from signialib import SIGNIA_CAL_PATH, Session
 
 
 def load(path: str, target_sample_rate_hz: int = 0, skip_calibration=False):
@@ -34,6 +33,12 @@ def load(path: str, target_sample_rate_hz: int = 0, skip_calibration=False):
     This function can only be applied to dataset recorded using the Signia Hearing Aids.
 
     """
+    try:
+        from signialib import SIGNIA_CAL_PATH, Session  # noqa
+    except ModuleNotFoundError:  # noqa
+        warnings.warn("Function load can only be used if python package 'signialib' can be accessed.")
+        raise ValueError() # noqa
+
     path = Path(path)
     session = Session.from_folder_path(path)
     if target_sample_rate_hz != 0:
