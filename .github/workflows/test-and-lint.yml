@@ -28,10 +28,10 @@ jobs:
         poetry install 
     - name: Testing
       run: |
-        poetry run doit test
+        poetry run poe test
     - name: Linting
       run: |
-        poetry run doit -v 0 --continue format_check lint
+        poetry run poe check
     - name: "Upload coverage to Codecov"
       uses: codecov/codecov-action@v2
       with:
