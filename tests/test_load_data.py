@@ -23,7 +23,7 @@ class TestImport(TestCase):
     def test_convert_to_ebf(self):
         with open(HERE.joinpath("test_data/converted_to_ebf.pickle"), "rb") as handle:
             reference_data_ebf = pickle.load(handle)
-        session = load(HERE.joinpath("test_data/subject01"))
+        session = load(HERE.joinpath("test_data/subject01"), skip_calibration=True)
         data_ebf = convert_ear_to_ebf(session)
         for key, val in data_ebf.items():
             pd.testing.assert_frame_equal(val, reference_data_ebf[key])
