@@ -171,6 +171,9 @@ sphinx_gallery_conf = {
     "show_memory": True,
     "subsection_order": ExplicitOrder(
         [
+            "../examples/check_installation",
+            "../examples/load_data",
+            "../examples/gait_analysis_pipeline",
             "../examples/temporal_parameter_estimation",
         ]
     ),
