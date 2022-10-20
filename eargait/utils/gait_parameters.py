@@ -60,13 +60,13 @@ def _get_single_temporal_params_single_lateral(
 ) -> pd.DataFrame:
     df = pd.DataFrame(index=event_list.index, columns=["stride_time", "stance_time", "swing_time"])
     df["stride_time"] = pd.Series(
-        (event_list.ic.diff().shift(-1)[0:-1] / sampling_rate_hz).to_numpy(), index=df.index[1::]
+        (event_list.ic.diff().shift(-1).iloc[0:-1] / sampling_rate_hz).to_numpy(), index=df.index[1::]
     )
 
     stance = pd.Series(
-        (event_list.tc[1:].to_numpy() - event_list.ic[0:-1].to_numpy()) / sampling_rate_hz, index=df.index[1::]
+        (event_list.tc.iloc[1:].to_numpy() - event_list.ic.iloc[0:-1].to_numpy()) / sampling_rate_hz, index=df.index[1::]
     )
-    df["swing_time"] = np.array((event_list.ic[0::] - event_list.tc[0::]) / sampling_rate_hz)
+    df["swing_time"] = np.array((event_list.ic.iloc[0::] - event_list.tc.iloc[0::]) / sampling_rate_hz)
     df["stance_time"] = stance
     _sanity_check_temporal_parameters(df)
     return df
