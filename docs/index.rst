@@ -12,3 +12,4 @@ eargait Docu Overview
 
    Getting Started <README.md>
    auto_examples/index.rst
+   source/user_guide/index.rst
