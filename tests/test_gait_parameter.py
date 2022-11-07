@@ -36,10 +36,9 @@ def _dummy_spatiotemp_list():
 class TestImport(TestCase):
     def test_temporal_parameter_estimation(self):
         event_list = load_pickle(HERE.joinpath("test_data/gait_events_diao_adapted.pkl"))
-        ref_temp_params = load_pickle(HERE.joinpath("test_data/temporal_params.pkl"))
+        ref_temp_params = pd.read_csv(HERE.joinpath("test_data/temporal_params_right_sensor.csv"), index_col=0)
         estimated_temp_params = get_temporal_params(event_list, 50)
-        assert_frame_equal(estimated_temp_params["right_sensor"], ref_temp_params["right_sensor"])
-        assert_frame_equal(estimated_temp_params["left_sensor"], ref_temp_params["left_sensor"])
+        assert_frame_equal(estimated_temp_params["right_sensor"], ref_temp_params)
 
     def test_get_asymmetry(self):
         spatial_method = SpatialParamsExample(50)
