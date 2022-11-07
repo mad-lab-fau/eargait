@@ -4,22 +4,33 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/eargait)
 
-# Eargait - The Gait Analysis Package for Ear-Worn IMU Sensors !
+# EarGait - The Gait Analysis Package for Ear-Worn IMU Sensors !
 
-*Eargait* provides a set of algorithms and functions to process IMU data recorded with ear-worn IMU sensors and to 
+*EarGait* provides a set of algorithms and functions to process IMU data recorded with ear-worn IMU sensors and to 
 estimate characteristic gait parameters. 
 
 <center> <img src=./docs/_static/logo/WalkingHearingAid.pdf height="200"/></center>
 
-This project is 
 
 ## Getting started
 
+### Installation
+
+Easily install `eargait` via pip:
+```
+pip install eargait
+```
+
+or add it to your project with [poetry](https://python-poetry.org/):
+```
+poetry add eargait
+```
+
 ### Prerequisites
-*Eargait* only supports Python 3.8 and newer.
+*EarGait* only supports Python 3.8 and newer.
 First, install a compatible version of Python.
 
-### Set up athe the virtual environment
+### Help with setting up a virtual environment
 We recommend installing the packages in a virtual environment (e.g. conda/Anaconda/miniconda).
 For more information regarding Anaconda, please visit [Anaconda.com](https://docs.anaconda.com/anaconda/install/index.html). <br />
 If you want to install the packages directly on the local python version, directly go to [Install Packages](#install-packages)  <br />
@@ -60,33 +71,12 @@ conda activate gait_analysis
 For more help: [Conda Documentation](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html)
 
 
-### Install Packages
+### Install Package in virtual environment
 If you are using the conda environment, activate environment (in shell/terminal) (see above).
-You can also install the packages directly on the local python version of the computer.
-
-#### Update pip
+Update pip and install `eargait`.
 ```
 pip install --upgrade pip 
-```
-#### *signialib*
-Within the shell/terminal, go to the Signia directory by
-```
-cd my_local_path/signialib
-```
-*my_local_path* should be changed to the local path of the computer, where the Signia package is saved. <br /> 
-Then install the package with:
-```
-pip install .
-```
-
-####  *eargait*
-Change to the local directory of Eargait with:
-```
-cd my_local_path/eargait
-```
-Then install the package with:
-```
-pip install -e .
+pip install eargait
 ```
 
 ## Check successful installation
@@ -94,21 +84,14 @@ pip install -e .
 To check whether the installation was successful, run the following line directly after installing `eargait` in the same shell/terminal: 
 ```
 python examples/check_installation/check_installation.py
-
 ```
 Should return: `Installation was successful!`
 
-## Poetry Environment
-
-If you are using poetry and want add the package to you existing poetry environment, run: 
-```
-poetry add eargait
-```
 
 ## Dev Setup
 We are using poetry to manage dependencies and poethepoet to run and manage dev tasks. 
 
-To set up the dev environment including the required dependencies for using eargait run the following commands:
+To set up the dev environment including the required dependencies for using EarGait run the following commands:
 ```
 git clone https://github.com/mad-lab-fau/eargait
 cd eargait
@@ -133,7 +116,7 @@ poetry run poe <command name>
 ```
 
 
-## Citing Eargait
+## Citing EarGait
 
 If you use `Eargait` in your work, please report the version you used in the text. Additionally, please also cite the corresponding paper:
 
@@ -144,7 +127,7 @@ Seifer et al., (2022). TODO:, https://doi.org/TODO
 
 ## Acknowledgement
 
-Eargait is part of a research project from the Machine Learning and Data Analytics Lab, Friedrich-Alexander Universität Erlangen-Nürnberg. The authors thank WS Audiology, Erlangen, Germany and Lynge, Denmark for funding the work and their support which made this contribution possible.
+EarGait is part of a research project from the Machine Learning and Data Analytics Lab, Friedrich-Alexander Universität Erlangen-Nürnberg. The authors thank WS Audiology, Erlangen, Germany and Lynge, Denmark for funding the work and their support which made this contribution possible.
 
 
 ## Contribution
