@@ -1,8 +1,6 @@
-.. _user-guide:
-
-==========
-User Guide
-==========
+===========
+User Guides
+===========
 
 
 .. toctree::

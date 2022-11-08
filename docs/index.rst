@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-eargait Docu Overview
+EarGait Docu Overview
 =====================
 
 .. toctree::
@@ -11,5 +11,6 @@ eargait Docu Overview
    :caption: Content:
 
    Getting Started <README.md>
+   guides/index.rst
    auto_examples/index.rst
-   source/user_guide/index.rst
+   

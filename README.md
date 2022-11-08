@@ -9,7 +9,8 @@
 *EarGait* provides a set of algorithms and functions to process IMU data recorded with ear-worn IMU sensors and to 
 estimate characteristic gait parameters. 
 
-<center> <img src=./docs/_static/logo/WalkingHearingAid.pdf height="200"/></center>
+
+<center> <img src="./docs/_static/logo/WalkingHearingAid.png" height="200"/></center>
 
 
 ## Getting started
@@ -86,6 +87,11 @@ To check whether the installation was successful, run the following line directl
 python examples/check_installation/check_installation.py
 ```
 Should return: `Installation was successful!`
+
+
+## Learn More
+[Documentation](https://eargait.readthedocs.io/en/latest/),
+[User Guide](https://eargait.readthedocs.io/en/latest/guides/index.html#user-guides),
 
 
 ## Dev Setup
