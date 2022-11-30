@@ -931,11 +931,11 @@ def _get_static_acc_vector(
     # raise exception if no static windows could be found with given user settings
     if not any(static_bool_array):
         print(
-            "No static windows could be found to extract sensor offset orientation. Please check your input data or try"
-            " to adapt parameters like window_length, static_signal_th or used metric."
+            "No static windows could be found to extract sensor offset orientation. "
+            "Window_length and static_singal_th will be adapted and search will be started again."
         )
         static_bool_array = find_static_samples(
-            data[SF_GYR].to_numpy(), window_length - 5, static_signal_th + 0.5, metric
+            data[SF_GYR].to_numpy(), window_length-5, static_signal_th+5, metric
         )
         if not any(static_bool_array):
             warnings.warn(
