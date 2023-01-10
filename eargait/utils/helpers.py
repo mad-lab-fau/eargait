@@ -17,6 +17,7 @@ def load_pickle(path: Path):
 
 def save_pickle(path: Path, variable):
     """Save a variable as pickle."""
+    path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "wb") as handle:
         pickle.dump(variable, handle, protocol=pickle.HIGHEST_PROTOCOL)
 

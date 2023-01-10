@@ -128,7 +128,7 @@ add_function_parentheses = False
 #
 # Activate the theme.
 html_theme = "pydata_sphinx_theme"
-html_logo = "./_static/logo/WalkingHearingAid.pdf"
+html_logo = "_static/logo/WalkingHearingAid.png"
 html_theme_options = {
     "github_url": "https://github.com/mad-lab-fau/eargait",
     "show_prev_next": False,
