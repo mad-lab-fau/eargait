@@ -35,7 +35,10 @@ def load(path: str, target_sample_rate_hz: int = 0, skip_calibration=False):
 
     """
     path = Path(path)
-    session = Session.from_folder_path(path)
+    if path.is_file():
+        session = Session.from_file_paths([path])
+    else:
+        session = Session.from_folder_path(path)
     if target_sample_rate_hz != 0:
         _check_valid_resample_rate(session.info.sampling_rate_hz[0], target_sample_rate_hz)
     else:

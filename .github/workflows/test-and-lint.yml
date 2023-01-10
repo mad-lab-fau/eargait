@@ -26,12 +26,12 @@ jobs:
         pip install poetry
         poetry config virtualenvs.in-project true
         poetry install 
-    - name: Testing
-      run: |
-        poetry run poe test
     - name: Linting
       run: |
         poetry run poe check
+    - name: Testing
+      run: |
+        poetry run poe test
     - name: "Upload coverage to Codecov"
       uses: codecov/codecov-action@v2
       with:
