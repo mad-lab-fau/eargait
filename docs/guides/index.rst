@@ -6,4 +6,5 @@ User Guides
 .. toctree::
     :maxdepth: 1
 
-    gait_parameters
+    	coordinate_systems
+	gait_parameters
