@@ -4,6 +4,8 @@
    contain the root `toctree` directive.
 
 .. image:: https://raw.github.com/mad-lab-fau/eargait/master/docs/_static/logo/WalkingHearingAid.png
+   :width: 100
+   :align: center
 
 EarGait Docu Overview
 =====================
