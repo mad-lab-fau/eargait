@@ -30,23 +30,33 @@ def convert_ear_to_ebf(session: Union[Session, SyncedSession]) -> MultiSensorDat
     MutliSensorData
             Contains gyroscope and acceleration data in the ear body frame
 
+    Notes
+    -----
+    This funktion can only be used if session data is in hearing aid frame. A different rotation is chosen if
+    firmware version is D12. See user guide, coordinate systems for more information.
+
     """
     dataset_sf = convert_ear_to_esf(session)
     return convert_esf_to_ebf(dataset_sf)
 
 
 def aling_gravity_and_convert_ear_to_ebf(session: Union[Session, SyncedSession]) -> SensorData:
-    """Convert sensor data from ear worn sensors into the ear body frame (ebf).
+    """Convert sensor data from hearing aid frame into the ear body frame (ebf).
 
     Parameters
     ----------
     session :
-            Recorsing session either of type SigniaSession or Nilspod SyncSession.
+            Recording session either of type SigniaSession or Nilspod SyncSession.
 
     Return
     ------
     MutliSensorData
             Contains gyroscope and acceleration data in the ear body frame
+
+    Notes
+    -----
+    This funktion can only be used if session data is in hearing aid frame. A different rotation is chosen if
+    firmware version is D12. See user guide, coordinate systems for more information.
 
     """
     dataset_sf = convert_ear_to_esf(session)
@@ -60,17 +70,22 @@ def aling_gravity_and_convert_ear_to_ebf(session: Union[Session, SyncedSession])
 
 
 def convert_ear_to_esf(session: Union[Session, SyncedSession]) -> SensorData:
-    """Convert sensor data from ear worn sensors into the ear body frame (ebf).
+    """Convert sensor data from hearing aid frame (haf) into the ear sensor frame (esf).
 
     Parameters
     ----------
     session :
-            Recording session either of type SigniaSession or Nilspod SyncSession.
+            Recording session of type SigniaSession
 
     Return
     ------
     SensorData
             Contains gyroscope and acceleration data in the ear body frame
+
+    Notes
+    -----
+    This funktion can only be used if session data is in hearing aid frame. A different rotation is chosen if
+    firmware version is D12. See user guide, coordinate systems for more information.
 
     """
     # data into sensor_data (single or multi)
@@ -84,7 +99,24 @@ def convert_ear_to_esf(session: Union[Session, SyncedSession]) -> SensorData:
     return dataset_sf
 
 
-def convert_esf_to_ebf(datasets: MultiSensorData) -> MultiSensorData:
+def convert_esf_to_ebf(datasets: SensorData) -> SensorData:
+    """Convert sensor data from ear sensor frame (esf) into the ear body frame (ebf).
+
+    Parameters
+    ----------
+    datasets:
+            Dataset
+
+    Return
+    ------
+    SensorData
+            Contains gyroscope and acceleration data in the ear body frame
+
+    Notes
+    -----
+    See user guide, coordinate systems for more information.
+
+    """
     if len(datasets) == 1:
         sensor_pos = list(datasets.keys())[0]
         if sensor_pos == "left_sensor":
@@ -110,7 +142,7 @@ def _get_rotation(session: Union[SyncedSession, Session, str]) -> Dict:
         right_rot = rotation_from_angle(np.array([0, 0, 1]), np.deg2rad(180)) * rotation_from_angle(
             np.array([1, 0, 0]), np.deg2rad(-90)
         )
-        rot = dict(left_sensor=left_rot, right_sensor=right_rot)
+        rot = {"left_sensor": left_rot, "right_sensor": right_rot}
     return rot
 
 

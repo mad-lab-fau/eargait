@@ -1,5 +1,6 @@
 strictness: veryhigh
 doc-warnings: true
+autodetect: false
 
 ignore-paths:
   - docs

@@ -8,7 +8,7 @@ Coordinate  Systems
 Defining coordinate system is a crucial aspect when working with IMU data. The coordinate system definition of an internal gaitmap library [2]_. 
 
 
-Hearing Aid Frame (HASF)
+Hearing Aid Frame (HAF)
     * forms a right-handed coordinate system with axes called **X, Y, Z** 
     * uses right-hand-rule around each axis for definition of positive direction of the Gyroscope 
     * axis as defined by the sensor itself, depends on how sensor is located in hearing aid housing
@@ -96,7 +96,7 @@ Some times an alignment with gravity is necessary.
 The function :func:`~eargait.utils.preprocessing.rotations.aling_gravity_and_convert_ear_to_ebf` transforms data into eargait-ESF, then alignes data with gravity and then transforms it into body frame.
 
 
-.. note:: Can only be applied for if data is in eargait-HASF.
+.. note:: Can only be applied for if data is in eargait-HAF.
 
 
 Reference
