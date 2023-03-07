@@ -68,7 +68,6 @@ Algorithmic Implementation
 ==========================
 The algorithmic implementation is also based on the internal gaitmap library [2]_. 
 
-.. _alignment-algorithms:
 
 Alignment with the Ear Sensor Frame
 -----------------------------------
