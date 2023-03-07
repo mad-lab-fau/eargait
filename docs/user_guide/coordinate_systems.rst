@@ -38,7 +38,7 @@ Ear Frame Overview
 
     The positive directions for the accelerometer (straight arrows) and the gyroscope (circular arrows) for the hearing aid frame (top), ear
     sensor frame (bottom left) and ear body frame (bottom right).
-    `Click here for fullscreen version of image <../_images/eargait_sensor_body_frame.svg>`_
+    `Click here for fullscreen version of image <../images/eargait_sensor_body_frame.svg>
 
 .. table:: Table showing the expected signal (positive or negative and in which axis) when a certain movement
            (displacement or rotation) of a ear happens for the sensor (ESF) and the body frame (EBF).
