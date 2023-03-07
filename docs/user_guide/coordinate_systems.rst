@@ -33,7 +33,8 @@ Ear Frame Overview
 
 .. figure:: ../images/eargait_sensor_body_frame.svg
     :alt: eargait foot frame
-    :width: 300 
+    :width: 500 
+    :align: center
     :figclass: align-center
 
     The positive directions for the accelerometer (straight arrows) and the gyroscope (circular arrows) for the hearing aid frame (top), ear
