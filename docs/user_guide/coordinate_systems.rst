@@ -104,4 +104,4 @@ Reference
        recommendation on definitions of joint coordinate system of various joints for the reporting of human joint
        motion - Part I: Ankle, hip, and spine. Journal of Biomechanics. https://doi.org/10.1016/S0021-9290(01)00222-6
        
-   [2] Küderle A., et al. Gaitmap. To be published soon. 
+.. [2] Küderle A., et al. Gaitmap. To be published soon. 
