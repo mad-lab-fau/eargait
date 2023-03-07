@@ -4,7 +4,7 @@
 
 Coordinate  Systems
 ===================
-Defining coordinate system is a crucial aspect when working with IMU data. The coordinate system definition of an internal gaitmap library [2]_. 
+Defining coordinate system is a crucial aspect when working with IMU data. The coordinate system definition of an internal gaitmap library [1]_. 
 
 
 Hearing Aid Frame (HAF)
@@ -24,7 +24,7 @@ Foot Body Frame (FBF)
     * is **not** right handed and should not be used for any physical calculations
     * produces the same sensor signal independent of the ear (right/left) for the same anatomical movement (e.g.
       lateral acceleration = positive acceleration)
-    * follows convention of directions from [1]_
+    * follows convention of directions from [2]_
 
 .. _ff:
 
@@ -100,8 +100,7 @@ The function :func:`~eargait.utils.preprocessing.rotations.aling_gravity_and_con
 Reference
 ---------
 
-.. [1] Wu, G., Siegler, S., Allard, P., Kirtley, C., Leardini, A., Rosenbaum, D., … Stokes, I. (2002). ISB
+.. [1] Küderle A., et al. Gaitmap. To be published soon. 
+.. [2] Wu, G., Siegler, S., Allard, P., Kirtley, C., Leardini, A., Rosenbaum, D., … Stokes, I. (2002). ISB
        recommendation on definitions of joint coordinate system of various joints for the reporting of human joint
        motion - Part I: Ankle, hip, and spine. Journal of Biomechanics. https://doi.org/10.1016/S0021-9290(01)00222-6
-       
-.. [2] Küderle A., et al. Gaitmap. To be published soon. 
