@@ -31,7 +31,7 @@ Foot Body Frame (FBF)
 Ear Frame Overview
 -------------------
 
-.. figure:: /images/eargait_sensor_body_frame.svg
+.. figure:: ../images/eargait_sensor_body_frame.svg
     :alt: eargait foot frame
     :figclass: align-center
 
