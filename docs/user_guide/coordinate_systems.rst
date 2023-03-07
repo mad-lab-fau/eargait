@@ -2,7 +2,6 @@
 
 ===================
 
-
 Coordinate  Systems
 ===================
 Defining coordinate system is a crucial aspect when working with IMU data. The coordinate system definition of an internal gaitmap library [2]_. 
@@ -68,7 +67,6 @@ Ear Frame Overview
 Algorithmic Implementation
 ==========================
 The algorithmic implementation is also based on the internal gaitmap library [2]_. 
-
 
 .. _alignment-algorithms:
 

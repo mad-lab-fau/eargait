@@ -10,8 +10,9 @@
 estimate characteristic gait parameters. 
 
 
-<center> <img src="./docs/_static/logo/WalkingHearingAid.png" height="200"/></center>
-
+<p align="center">
+  <img src="./docs/_static/logo/WalkingHearingAid.png" height="200"/>
+</p>
 
 ## Getting started
 
@@ -92,6 +93,7 @@ Should return: `Installation was successful!`
 ## Learn More
 [Documentation](https://eargait.readthedocs.io/en/latest/),
 [User Guide](https://eargait.readthedocs.io/en/latest/guides/index.html#user-guides),
+[Coordinate Systems](https://eargait.readthedocs.io/en/latest/guides/index.html)
 
 
 ## Dev Setup

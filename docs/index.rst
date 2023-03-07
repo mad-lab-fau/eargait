@@ -15,6 +15,6 @@ EarGait Docu Overview
    :caption: Content:
 
    Getting Started <README.md>
-   guides/index.rst
+   user_guide/index.rst
    auto_examples/index.rst
    
