@@ -28,6 +28,8 @@ or add it to your project with [poetry](https://python-poetry.org/):
 poetry add eargait
 ```
 
+Newest version `1.2.0` should be installed.
+
 ### Prerequisites
 *EarGait* only supports Python 3.8 and newer.
 First, install a compatible version of Python.

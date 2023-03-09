@@ -33,9 +33,10 @@ data_path = get_example_data_path()
 # Loading the data
 # ----------------
 #
-# A data session refers to a recording by signia hearing aids. A session can consist of a single `*.mat` file or two `*.mat` file, for left and right ear, respectively.
-# The session is loaded using the local path data_path` of the directory, in which the matlab file(s) are stored.
-# For more options regardind loading the data see :ref:`example_load_data`.
+# A data session refers to a recording by signia hearing aids.
+# A session can consist of a single '*.txt' or `*.mat` file, or two `*.mat` files, for left and right ear, respectively.
+# The session is loaded using the local path data_path` of the directory, in which the matlab/txt file(s) are stored.
+# For more options regarding loading the data see :ref:`example_load_data`.
 target_sample_rate = 50
 session = load(data_path, target_sample_rate_hz=target_sample_rate, skip_calibration=True)
 session.info
