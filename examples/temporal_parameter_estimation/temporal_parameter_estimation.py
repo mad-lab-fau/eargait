@@ -19,10 +19,10 @@ import pandas as pd
 from eargait import EarGait
 from eargait.event_detection import DiaoAdaptedEventDetection
 from eargait.preprocessing import aling_gravity_and_convert_ear_to_ebf, convert_ear_to_ebf, load
-from eargait.utils.example_data import get_example_data_path
+from eargait.utils.example_data import get_mat_example_data_path
 
 # data directory
-data_path = get_example_data_path()
+data_path = get_mat_example_data_path()
 
 # %%
 # Loading the data
