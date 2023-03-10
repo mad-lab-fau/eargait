@@ -24,10 +24,10 @@ from eargait import EarGait
 from eargait.event_detection import DiaoAdaptedEventDetection
 from eargait.preprocessing import aling_gravity_and_convert_ear_to_ebf, load
 from eargait.spatial_params import SpatialParamsExample
-from eargait.utils.example_data import get_example_data_path
+from eargait.utils.example_data import get_mat_example_data_path
 
-# data directory
-data_path = get_example_data_path()
+# path to data file (.txt or .mat) or data directory (only for .mat)
+data_path = get_mat_example_data_path()
 
 # %%
 # Loading the data

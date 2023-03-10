@@ -38,6 +38,7 @@ data_path
 # recommended to use this function but to load a Session as shown in the next section.
 
 from signialib import Dataset
+
 dataset = Dataset.from_mat_file(data_path.joinpath("data_left.mat"))
 # not recommended, use Session.from_folder_path(data_path) instead
 
@@ -46,6 +47,7 @@ dataset = Dataset.from_mat_file(data_path.joinpath("data_left.mat"))
 # -------------------------------
 #
 from signialib import Session
+
 session = Session.from_folder_path(data_path)
 
 
@@ -58,6 +60,7 @@ session = Session.from_folder_path(data_path)
 # e.g. user/example.txt or user/example.mat.
 # All other functionalities (alignment, resampling etc., see below) for sessions are the same for all file types.
 from signialib import Session
+
 data_path_txt = get_txt_example_data_path()
 session_txt = Session.from_file_path(data_path_txt)
 
