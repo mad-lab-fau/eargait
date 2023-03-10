@@ -27,8 +27,8 @@ from eargait.spatial_params import SpatialParamsExample
 # Loading the data
 # ----------------
 #
-# Calibrated + alinged to gravity + body frame
-from eargait.utils.example_data import get_example_data, get_example_data_path
+# Calibrated + aligned to gravity + body frame
+from eargait.utils.example_data import get_example_data
 
 data, target_sample_rate = get_example_data()
 data
@@ -52,7 +52,7 @@ event_detection_algorithm = DiaoAdaptedEventDetection(
 # %%
 # Initializing spatial parameter estimation method
 # ------------------------------------------------
-# Note: SpatialParamsExample is an placeholder class.
+# Note: SpatialParamsExample is a placeholder class.
 # Needs to be implemented by user if spatial parameters want to be estimated.
 spatial_method = SpatialParamsExample(target_sample_rate)
 
