@@ -40,7 +40,7 @@ data_path
 from signialib import Dataset
 
 dataset = Dataset.from_mat_file(data_path.joinpath("data_left.mat"))
-# not recommended, use Session.from_folder_path(data_path) instead
+# not recommended, recommended to use Session.from_folder_path(data_path) instead.
 
 # %%
 # Loading the data from mat files
@@ -74,8 +74,7 @@ session.info
 
 # should display something like this:
 from eargait.utils.example_data import plot_image
-
-# plot_image(data_path.parent.parent.parent.joinpath("docs/_static/example_screenshots/session_info.png"))
+IMAGE = plot_image(data_path.parent.parent.parent.joinpath("docs/_static/example_screenshots/session_info.jpeg"))
 
 # %%
 # Get information about sensors
