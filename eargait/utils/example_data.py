@@ -13,9 +13,15 @@ from eargait.utils.helper_gaitmap import MultiSensorData
 HERE = Path(__file__).parent.parent.parent
 
 
-def get_example_data_path() -> Path:
+def get_mat_example_data_path() -> Path:
     # data directory
-    data_dir = HERE.joinpath("example_data/subject01/normal")
+    data_dir = HERE.joinpath("example_data/mat_files/normal")
+    return data_dir
+
+
+def get_txt_example_data_path() -> Path:
+    # data directory
+    data_dir = HERE.joinpath("example_data/txt_file/08-03-2023_11-12-51_txt_example_no_gait_data.txt")
     return data_dir
 
 

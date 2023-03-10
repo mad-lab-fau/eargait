@@ -24,10 +24,10 @@ same data structure as the *.mat files in the example_data folder.
 
 from pathlib import Path
 
-from eargait.utils.example_data import get_example_data_path
+from eargait.utils.example_data import get_mat_example_data_path, get_txt_example_data_path
 
 # data directory
-data_path = get_example_data_path()
+data_path = get_mat_example_data_path()
 data_path
 
 # %%
@@ -37,17 +37,30 @@ data_path
 # Note: This method loads a single  *.mat file. If the recording constitutes a *.mat file for both ears, it's not
 # recommended to use this function but to load a Session as shown in the next section.
 
-from signialib import Session
-
-# dataset = Dataset.from_mat_file(data_path.joinpath("data_left.mat"))
+from signialib import Dataset
+dataset = Dataset.from_mat_file(data_path.joinpath("data_left.mat"))
+# not recommended, use Session.from_folder_path(data_path) instead
 
 # %%
-# Loading the data
-# ----------------
+# Loading the data from mat files
+# -------------------------------
 #
-
-
+from signialib import Session
 session = Session.from_folder_path(data_path)
+
+
+# %%
+# Loading the data from txt files
+# -------------------------------
+#
+# For txt files a different loading function is required.
+# The function Session.from_file_path() expects a specific file path of either a txt file or a single mat file,
+# e.g. user/example.txt or user/example.mat.
+# All other functionalities (alignment, resampling etc., see below) for sessions are the same for all file types.
+from signialib import Session
+data_path_txt = get_txt_example_data_path()
+session_txt = Session.from_file_path(data_path_txt)
+
 
 # %%
 # Get information about session
