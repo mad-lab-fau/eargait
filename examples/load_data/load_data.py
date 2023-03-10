@@ -56,7 +56,7 @@ session = Session.from_folder_path(data_path)
 # -------------------------------
 #
 # For txt files a different loading function is required.
-# The function Session.from_file_path() expects a specific file path of either a txt file or a single mat file,
+# The function :class:`~eargait.Session.from_file_path` expects a specific file path of either a txt file or a single mat file,
 # e.g. user/example.txt or user/example.mat.
 # All other functionalities (alignment, resampling etc., see below) for sessions are the same for all file types.
 from signialib import Session
