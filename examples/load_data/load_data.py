@@ -74,6 +74,7 @@ session.info
 
 # should display something like this:
 from eargait.utils.example_data import plot_image
+
 IMAGE = plot_image(data_path.parent.parent.parent.joinpath("docs/_static/example_screenshots/session_info.jpeg"))
 
 # %%
