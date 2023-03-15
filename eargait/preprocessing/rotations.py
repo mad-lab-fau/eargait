@@ -5,7 +5,7 @@ import numpy as np
 from nilspodlib import SyncedSession
 from signialib import Session
 
-from eargait.utils.consts import SF_COLS
+from eargait.utils.consts import SF_ACC, SF_COLS
 from eargait.utils.helper_gaitmap import (
     MultiSensorData,
     SensorData,
@@ -89,12 +89,12 @@ def convert_ear_to_esf(session: Union[Session, SyncedSession]) -> SensorData:
 
     """
     # data into sensor_data (single or multi)
-    dataset = get_ear_multi_sensor_data(session)
+    dataset, gyr_avail = get_ear_multi_sensor_data(session)
 
     # rotate to sensor frame
     rotation = _get_rotation(session)
-    dataset_sf = rotate_dataset(dataset, rotation)
-    is_multi_sensor_data(dataset_sf, frame="sensor", raise_exception=True)
+    dataset_sf = rotate_dataset(dataset, rotation, check_gyr=gyr_avail)
+    is_multi_sensor_data(dataset_sf, frame="sensor", raise_exception=True, check_gyr=gyr_avail)
     # rotate to body frame and return
     return dataset_sf
 
@@ -177,5 +177,10 @@ def get_ear_multi_sensor_data(session: Union[SyncedSession, Session]) -> Dict:
     res = {}
     for dataset in session.datasets:
         pos = dataset.info.sensor_position.split("_")[1]
-        res[pos + "_sensor"] = dataset.data_as_df()[SF_COLS]
-    return res
+        if session.gyro[0]:
+            res[pos + "_sensor"] = dataset.data_as_df()[SF_COLS]
+            gyr_avail = True
+        else:
+            res[pos + "_sensor"] = dataset.data_as_df()[SF_ACC]
+            gyr_avail = False
+    return res, gyr_avail
