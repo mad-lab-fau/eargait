@@ -1,6 +1,6 @@
 """The Gait and Movement Analysis Package based on Ear-worn Sensor."""
 
-__version__ = "1.3.0"
+__version__ = "1.4.0"
 
 from eargait.eargait import EarGait
 
