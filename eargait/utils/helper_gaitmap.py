@@ -1,4 +1,4 @@
-"""This is a collection of helpers that were copied from MaDLab internal code bases.
+"""This is a collection of helpers that were copied from MaDLab internal python package gaitmap.
 The original copyright belongs to MaD-DiGait group.
 All original authors agreed to have the respective code snippets published in this way.
 In case any problems are detected, these changes should be upstreamed to the respective internal libraries.
@@ -926,17 +926,21 @@ def _get_static_acc_vector(
 ) -> np.ndarray:
     """Extract the mean accelerometer vector describing the static position of the sensor."""
     # find static windows within the gyro data
-    static_bool_array = find_static_samples(data[SF_GYR].to_numpy(), window_length, static_signal_th, metric)
+    if SF_GYR[0] in data.columns:
+        cols = SF_GYR
+    else:
+        cols = SF_ACC
+        print("No gyroscope data is available, acceleration signal is used for gravity alignment.")
+
+    static_bool_array = find_static_samples(data[cols].to_numpy(), window_length, static_signal_th, metric)
 
     # raise exception if no static windows could be found with given user settings
     if not any(static_bool_array):
         print(
-            "No static windows could be found to extract sensor offset orientation. "
+            "No static windows could be found to extract sensor offset orientation."
             "Window_length and static_singal_th will be adapted and search will be started again."
         )
-        static_bool_array = find_static_samples(
-            data[SF_GYR].to_numpy(), window_length - 5, static_signal_th + 5, metric
-        )
+        static_bool_array = find_static_samples(data[cols].to_numpy(), window_length - 5, static_signal_th + 5, metric)
         if not any(static_bool_array):
             warnings.warn(
                 "No static windows could be found to extract sensor offset orientation. Please check your input data or try"
@@ -1305,7 +1309,7 @@ def align_dataset_to_gravity(
         for this method.
 
     """
-    dataset_type = is_sensor_data(dataset)
+    dataset_type = is_sensor_data(dataset, check_gyr=False)
 
     window_length = int(round(window_length_s * sampling_rate_hz))
     acc_vector: Union[np.ndarray, Dict[Hashable, np.ndarray]]
@@ -1332,18 +1336,23 @@ def align_dataset_to_gravity(
     return rotate_dataset(dataset, rotation)
 
 
-def _rotate_sensor(data: SingleSensorData, rotation: Optional[Rotation], inplace: bool = False) -> SingleSensorData:
+def _rotate_sensor(
+    data: SingleSensorData, rotation: Optional[Rotation], inplace: bool = False, gyr_avail: bool = True
+) -> SingleSensorData:
     """Rotate the data of a single sensor with acc and gyro."""
     if inplace is False:
         data = data.copy()
     if rotation is None:
         return data
-    data[SF_GYR] = rotation.apply(data[SF_GYR].to_numpy())
+    if gyr_avail:
+        data[SF_GYR] = rotation.apply(data[SF_GYR].to_numpy())
     data[SF_ACC] = rotation.apply(data[SF_ACC].to_numpy())
     return data
 
 
-def rotate_dataset(dataset: SensorData, rotation: Union[Rotation, Dict[str, Rotation]]) -> SensorData:
+def rotate_dataset(
+    dataset: SensorData, rotation: Union[Rotation, Dict[str, Rotation]], check_gyr: bool = True
+) -> SensorData:
     """Apply a rotation to acc and gyro data of a dataset.
 
     Parameters
@@ -1383,14 +1392,14 @@ def rotate_dataset(dataset: SensorData, rotation: Union[Rotation, Dict[str, Rota
     gaitmap.utils.rotations.rotate_dataset_series: Apply a series of rotations to a dataset
 
     """
-    dataset_type = is_sensor_data(dataset, frame="sensor")
+    dataset_type = is_sensor_data(dataset, frame="sensor", check_gyr=check_gyr)
     if dataset_type == "single":
         if isinstance(rotation, dict):
             raise ValueError(
                 "A Dictionary for the `rotation` parameter is only supported if a MultiIndex dataset (named sensors) is"
                 " passed."
             )
-        return _rotate_sensor(dataset, rotation, inplace=False)
+        return _rotate_sensor(dataset, rotation, inplace=False, gyr_avail=check_gyr)
 
     rotation_dict = rotation
     if not isinstance(rotation_dict, dict):
@@ -1403,7 +1412,7 @@ def rotate_dataset(dataset: SensorData, rotation: Union[Rotation, Dict[str, Rota
         rotated_dataset = dataset.copy()
         original_cols = dataset.columns
     for key in rotation_dict.keys():
-        test = _rotate_sensor(dataset[key], rotation_dict[key], inplace=False)
+        test = _rotate_sensor(dataset[key], rotation_dict[key], inplace=False, gyr_avail=check_gyr)
         rotated_dataset[key] = test
 
     if isinstance(dataset, pd.DataFrame):
@@ -1432,12 +1441,17 @@ def convert_left_foot_to_fbf(data: SingleSensorData):
     gaitmap.utils.coordinate_conversion.convert_to_fbf: convert multiple sensors at the same time
 
     """
-    is_single_sensor_data(data, check_acc=False, frame="sensor", raise_exception=True)
+    is_single_sensor_data(data, check_gyr=False, frame="sensor", raise_exception=True)
 
-    result = pd.DataFrame(columns=BF_COLS)
+    if "gyr_x" in data.columns:
+        cols_bf = BF_COLS
+    else:
+        cols_bf = BF_ACC
+
+    result = pd.DataFrame(columns=cols_bf)
 
     # Loop over all axes and convert each one separately
-    for sf_col_name in SF_COLS:
+    for sf_col_name in data.columns:
         result[FSF_FBF_CONVERSION_LEFT[sf_col_name][1]] = FSF_FBF_CONVERSION_LEFT[sf_col_name][0] * data[sf_col_name]
 
     return result
@@ -1546,7 +1560,7 @@ def convert_to_fbf(
     gaitmap.utils.coordinate_conversion.convert_right_foot_to_fbf: conversion of right foot SingleSensorData
 
     """
-    if not is_multi_sensor_data(data, frame="sensor"):
+    if not is_multi_sensor_data(data, frame="sensor", check_gyr=False):
         raise ValueError("No valid FSF MultiSensorDataset supplied.")
 
     if (left and left_like) or (right and right_like) or not any((left, left_like, right, right_like)):
