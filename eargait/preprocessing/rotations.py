@@ -129,9 +129,15 @@ def _get_rotation(session: Union[SyncedSession, Session, str]) -> Dict:
     if isinstance(session, Session) or session == "signia":
 
         if "D12" in session.info.version_firmware[0]:
-            rot_matrices = _get_rot_matrix_d12()
+            if "BMA400" == session.info.imu_sensor_type[0]:
+                rot_matrices = _get_rot_matrix_d12_bma400()
+                print("bma 400 and D12")
+            else:
+                rot_matrices = _get_rot_matrix_d12()
+                print("D12")
         else:
             rot_matrices = _get_rot_matrix_default()
+            print("D11, default")
 
         rot = {}
         for side in session.info.sensor_position:
@@ -165,6 +171,13 @@ def _get_rot_matrix_d12():
     rot_matrices["right"] = rotation_from_angle(np.array([1, 0, 0]), np.deg2rad(-90)) * rotation_from_angle(
         np.array([0, 1, 0]), np.deg2rad(-90)
     )
+    return rot_matrices
+
+
+def _get_rot_matrix_d12_bma400():
+    rot_matrices = {}
+    rot_matrices["left"] = rotation_from_angle(np.array([0, 1, 0]), np.deg2rad(90))
+    rot_matrices["right"] = rotation_from_angle(np.array([0, 1, 0]), np.deg2rad(90))
     return rot_matrices
 
 
