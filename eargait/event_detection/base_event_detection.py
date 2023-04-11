@@ -100,7 +100,7 @@ class BaseEventDetection(BaseEventDetectionGaitmap):
             The class instance with all result attributes populated
 
         """
-        dataset_type = is_sensor_data(data, frame="body")
+        dataset_type = is_sensor_data(data, frame="body", check_gyr=False)
 
         self.data = data
 

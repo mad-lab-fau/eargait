@@ -131,7 +131,7 @@ def _get_rotation(session: Union[SyncedSession, Session, str]) -> Dict:
         if "D12" in session.info.version_firmware[0]:
             if "BMA400" == session.info.imu_sensor_type[0]:
                 rot_matrices = _get_rot_matrix_d12_bma400()
-                print("bma 400 and D12")
+                print("BMA 400 and D12")
             else:
                 rot_matrices = _get_rot_matrix_d12()
                 print("D12")
