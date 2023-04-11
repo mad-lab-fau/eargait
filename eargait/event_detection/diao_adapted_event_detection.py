@@ -110,7 +110,8 @@ class DiaoAdaptedEventDetection(DiaoEventDetection):
         ic += acc.index[0]
         tc += acc.index[0]
 
-        if np.abs(acc.shape[0] / (sample_rate_hz * ic.shape[0]) - 0.5) > 0.15:
+        step_time_ration = acc.shape[0] / sample_rate_hz / ic.shape[0]
+        if 0.3 > step_time_ration > 0.8:
             # print(np.abs(acc.shape[0]/(sample_rate_hz*ic.shape[0])-0.5))
             msg = (
                 f"Walking bout length and number of ICs are unrealistic: "
