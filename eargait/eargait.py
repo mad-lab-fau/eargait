@@ -166,7 +166,9 @@ class EarGait(BaseEarGait):
             else:
                 spatial_params = {}
                 for sensor, events in self.event_list.items():
-                    spatial_params[sensor] = self.spatial_params_method.estimate(self.data[sensor], events)
+                    spatial_params[sensor] = self.spatial_params_method.estimate(
+                        data=self.data[sensor], event_list=events
+                    )
             self._spatial_params_memory = spatial_params
         return self._spatial_params_memory
 
