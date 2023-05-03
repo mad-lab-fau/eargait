@@ -40,7 +40,7 @@ def convert_ear_to_ebf(session: Union[Session, SyncedSession]) -> MultiSensorDat
     return convert_esf_to_ebf(dataset_sf)
 
 
-def aling_gravity_and_convert_ear_to_ebf(session: Union[Session, SyncedSession]) -> SensorData:
+def align_gravity_and_convert_ear_to_ebf(session: Union[Session, SyncedSession]) -> SensorData:
     """Convert sensor data from hearing aid frame into the ear body frame (ebf).
 
     Parameters

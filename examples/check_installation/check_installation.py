@@ -11,7 +11,7 @@ Check installation
 #
 
 from eargait.event_detection import DiaoAdaptedEventDetection
-from eargait.preprocessing import aling_gravity_and_convert_ear_to_ebf, convert_ear_to_ebf, load
+from eargait.preprocessing import align_gravity_and_convert_ear_to_ebf, convert_ear_to_ebf, load
 from eargait.utils.example_data import get_mat_example_data_path
 
 # data directory

@@ -20,7 +20,7 @@ same data structure as the *.mat files in the example_data folder.
 
 
 # from eargait.event_detection import DiaoAdaptedEventDetection
-# from eargait.preprocessing import aling_gravity_and_convert_ear_to_ebf, convert_ear_to_ebf, load
+# from eargait.preprocessing import align_gravity_and_convert_ear_to_ebf, convert_ear_to_ebf, load
 
 from pathlib import Path
 

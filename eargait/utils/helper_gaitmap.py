@@ -1477,12 +1477,17 @@ def convert_right_foot_to_fbf(data: SingleSensorData):
     gaitmap.utils.coordinate_conversion.convert_to_fbf: convert multiple sensors at the same time
 
     """
-    is_single_sensor_data(data, check_acc=False, frame="sensor", raise_exception=True)
+    is_single_sensor_data(data, check_gyr=False, frame="sensor", raise_exception=True)
 
-    result = pd.DataFrame(columns=BF_COLS)
+    if "gyr_x" in data.columns:
+        cols_bf = BF_COLS
+    else:
+        cols_bf = BF_ACC
+
+    result = pd.DataFrame(columns=cols_bf)
 
     # Loop over all axes and convert each one separately
-    for sf_col_name in SF_COLS:
+    for sf_col_name in data.columns:
         result[FSF_FBF_CONVERSION_RIGHT[sf_col_name][1]] = FSF_FBF_CONVERSION_RIGHT[sf_col_name][0] * data[sf_col_name]
 
     return result
