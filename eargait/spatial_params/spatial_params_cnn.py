@@ -6,7 +6,7 @@ Out of the 5 trained models, we chose the model that performed best on the entir
 
 More information on the dataset, training etc., can be found in the paper XY.
 
-The final 'production' model was created by following the guidlines in
+The final 'production' model was created by following the guidelines in
 https://tpcp.readthedocs.io/en/latest/guides/algorithm_evaluation.html.
 """
 from pathlib import Path
@@ -35,8 +35,8 @@ class SpatialParamsCNN(SpatialParamsBase):
     sample_rate_hz: int
 
     model_path: Path
-    model = None  # todo: Define data type for model
-    scaler = None  # eventual auch verstekcen
+    model = None
+    scaler = None
     memory: Optional[Memory]
 
     step_length_ = None
@@ -57,11 +57,21 @@ class SpatialParamsCNN(SpatialParamsBase):
     def estimate(self, data: SensorData, event_list: EventList) -> Union[Dict, pd.DataFrame]:
         self._load_model(memory=self.memory)
         self._load_scaler(memory=self.memory)
+
         data_vector, realistic_stride_time = self.dataloader.get_data_vector(data, event_list)
         data_vector_normalized = self.normalize(data_vector)
         step_length = self.predict(data_vector_normalized)
-        self.step_length_ = self._restructed_step_length_array(step_length, realistic_stride_time)
-        return self.step_length_
+        #step_length = self._remove_entries_for_unrealistic_stride_time(step_length_raw, realistic_stride_time)
+
+        step_length_series = pd.Series(name="step_length", index=event_list.index, dtype="float64")
+        step_length_series.iloc[1::] = step_length
+        ### copied RF
+        stride_length_series = step_length_series[1::] + step_length_series[0:-1]
+        stride_length_series.name = "stride_length"
+        spatial = pd.concat([step_length_series, stride_length_series], axis=1)
+        spatial = spatial.assign(side=event_list.side)
+        self.step_length_ = spatial
+        return spatial
 
     def predict(self, data_vector):
         if isinstance(data_vector, np.ndarray):
@@ -70,7 +80,7 @@ class SpatialParamsCNN(SpatialParamsBase):
             step_length = {}
             for sensor, data in data_vector.items():
                 step_length[sensor] = self.model.predict(data)
-        return step_length
+        return step_length.squeeze()
 
     def _load_model(self, memory: Memory):  # noqa: unused-argument
         if not self.model_path:
@@ -106,17 +116,17 @@ class SpatialParamsCNN(SpatialParamsBase):
             data_copy[:, :, i] = tmp.reshape(shape)
         return data_copy
 
-    def _restructed_step_length_array(self, step_length, realistic_bool):
+    def _remove_entries_for_unrealistic_stride_time(self, step_length, realistic_bool):
         if isinstance(step_length, np.ndarray):
-            step_series = self._restructed_step_length_array_single(step_length, realistic_bool)
+            step_series = self._remove_entries_for_unrealistic_stride_time_single(step_length, realistic_bool)
         else:
             step_series = {}
             for sensor, sl in step_length.items():
-                step_series[sensor] = self._restructed_step_length_array_single(sl, realistic_bool[sensor])
+                step_series[sensor] = self._remove_entries_for_unrealistic_stride_time_single(sl, realistic_bool[sensor])
         return step_series
 
     @staticmethod
-    def _restructed_step_length_array_single(sl, bool_array) -> pd.Series:
+    def _remove_entries_for_unrealistic_stride_time_single(sl, bool_array) -> pd.Series:
         sl_series = pd.Series(index=bool_array.index)
         sl_series[bool_array] = np.squeeze(sl)
         return sl_series

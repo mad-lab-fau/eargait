@@ -155,5 +155,7 @@ class FeatureExtractorDemographics(FeatureExtractor):
 
     def _get_features_single(self, data: SingleSensorData, gait_events: SingleSensorEventList) -> pd.DataFrame:
         features = self._calculate_features(data, gait_events)
-        features = pd.concat([features, self.demographic_features])
+        demos_df = pd.concat([self.demographic_features.to_frame().T] * features.shape[0])
+        demos_df.index = features.index
+        features = pd.concat([features, demos_df], axis=1)
         return features

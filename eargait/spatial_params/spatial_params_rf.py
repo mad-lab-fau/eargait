@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Dict, TypeVar, Union
 
 import pandas as pd
+from sklearn.pipeline import Pipeline
 
 from eargait.spatial_params import FeatureExtractor, FeatureExtractorDemographics
 from eargait.spatial_params.spatial_params_base import SpatialParamsBase
@@ -33,7 +34,7 @@ class SpatialParamsRandomForest(SpatialParamsBase):
 
     extractor: Union[FeatureExtractor, FeatureExtractorDemographics]
     model_path: Path
-    model = None  # todo: Define data type for model
+    model: Pipeline
 
     step_length_ = None
 
@@ -54,6 +55,7 @@ class SpatialParamsRandomForest(SpatialParamsBase):
         self.weight = weight
         self.gender = gender
         self.model_path = model_path
+        self.model = None
         super().__init__()
 
     def estimate(self, data: SensorData, event_list: EventList) -> Union[Dict, pd.DataFrame]:
@@ -73,24 +75,29 @@ class SpatialParamsRandomForest(SpatialParamsBase):
         spatial = pd.concat([step_length_series, stride_length_series], axis=1)
         spatial = spatial.assign(side=event_list.side)
         self.step_length_ = spatial
-        return spatial  # todo: wie ist die structur von spatial hier?
+        return spatial
 
     def _check_subjects_characteristics(self):
-        if self.gender not in ["m", "f", "w"]:
+        if self.gender and self.gender not in ["m", "f", "w"]:
             raise ValueError("Gender must be in ['m', 'f', 'w']")
-        if 18 > self.age < 110:
+        if self.age and 18 > self.age < 110:
             raise ValueError(f"Age must be in [18, 110]. Is: {self.age}")
-        if 140 > self.height < 215:
+        if self.height and 140 > self.height < 215:
             raise ValueError(f"Height must be in [140, 215]. Is: {self.height}")
-        if 45 > self.weight < 200:
+        if self.weight and 45 > self.weight < 200:
             raise ValueError(f"Height must be in [45, 200]. Is: {self.weight}")
 
     def _load_model(self):
         if not self.model_path:
             # find model path
-            self.model_path = HERE.joinpath(
-                "trained_models", "ml_randomforest", "rf_" + str(self.sample_rate_hz) + "hz_regressor.pkl"
-            )
+            if not self.extractor_demographics:
+                self.model_path = HERE.joinpath(
+                    "trained_models", "ml_randomforest", "rf_" + str(self.sample_rate_hz) + "hz_regressor.pkl"
+                )
+            else:
+                self.model_path = HERE.joinpath(
+                    "trained_models", "ml_randomforest", "rf_" + str(self.sample_rate_hz) + "hz_regressor_withDemo.pkl"
+                )
         if not self.model_path.is_file():
             potential_models = [
                 int(x.stem.split("hz")[0].split("_")[-1]) for x in HERE.iterdir() if (x.is_file() and "hz" in str(x))
