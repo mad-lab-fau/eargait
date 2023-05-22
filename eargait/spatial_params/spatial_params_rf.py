@@ -92,11 +92,11 @@ class SpatialParamsRandomForest(SpatialParamsBase):
             # find model path
             if not self.extractor_demographics:
                 self.model_path = HERE.joinpath(
-                    "trained_models", "ml_randomforest", "rf_" + str(self.sample_rate_hz) + "hz_regressor.pkl"
+                    "trained_models", "ml_randomforest", "2023_05_15_rf_" + str(self.sample_rate_hz) + "hz_regressor.pkl"
                 )
             else:
                 self.model_path = HERE.joinpath(
-                    "trained_models", "ml_randomforest", "rf_" + str(self.sample_rate_hz) + "hz_regressor_withDemo.pkl"
+                    "trained_models", "ml_randomforest", "2023_05_15_rf_" + str(self.sample_rate_hz) + "hz_regressor_withDemo.pkl"
                 )
         if not self.model_path.is_file():
             potential_models = [
