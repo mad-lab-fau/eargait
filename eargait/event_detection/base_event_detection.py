@@ -119,7 +119,7 @@ class BaseEventDetection(BaseEventDetectionGaitmap):
     def event_list_consistent_(self: Self):
         """Consistent based on alternating ipsi- and contralateral steps, non-consistent steps are set to NaN."""
         assert self._has_event_list()
-        dataset_type = is_sensor_data(self.data, frame="body")
+        dataset_type = is_sensor_data(self.data, frame="body", check_gyr=False)
         if dataset_type == "single":
             event_list_consistent_ = self._single_consistent_event_list(self.event_list_)
         else:
