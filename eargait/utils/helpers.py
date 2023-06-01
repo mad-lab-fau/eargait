@@ -24,7 +24,7 @@ def save_pickle(path: Path, variable):
 
 def butter_lowpass_filter(data: SensorData, cutoff_freq: int, nyq_freq: int, order: int) -> SensorData:
     """Butterworth Low Pass Filter."""
-    is_sensor_data(data)
+    is_sensor_data(data, check_gyr=False)
     normal_cutoff = float(cutoff_freq) / nyq_freq
     if normal_cutoff == 1:
         normal_cutoff = 10 / nyq_freq
@@ -34,14 +34,14 @@ def butter_lowpass_filter(data: SensorData, cutoff_freq: int, nyq_freq: int, ord
 
 def butter_highpass_filter(data: SensorData, cutoff_freq: int, nyq_freq: int, order: int) -> SensorData:
     """Butterworth High Pass Filter."""
-    is_sensor_data(data)
+    is_sensor_data(data, check_gyr=False)
     normal_cutoff = float(cutoff_freq) / nyq_freq
     b, a = signal.butter(order, normal_cutoff, btype="highpass")
     return _butter_filter(data, a, b)
 
 
 def _butter_filter(data: SensorData, a, b) -> SensorData:
-    kind = is_sensor_data(data)
+    kind = is_sensor_data(data, check_gyr=False)
     if kind == "single":
         data_filtered = _single_sensor_butter_filter(data, a, b)
     elif kind == "multi":
