@@ -204,7 +204,8 @@ class BaseEventDetection(BaseEventDetectionGaitmap):
         raise NotImplementedError("Needs to be implemented by child class.")
 
     def _plot(self: Self, sensor_pos: str = None, plot_ssa: bool = False) -> Self:  # noqa
-        fau_blaues = ["#003865", "#00b1eb", "#98a4ae"]
+        fau_blaues = ["#003865", "#00b1eb", "#98a4ae", "#c99313", "#8d1429", "#009b77"]
+        # dunkelblau, hellblau, grau, gelb,  rot, grün
 
         _, axes = plt.subplots(1, 1, sharex=True, figsize=(8, 4))
 
@@ -216,14 +217,13 @@ class BaseEventDetection(BaseEventDetectionGaitmap):
 
         for axis, style, color in zip(["acc_si", "acc_ml", "acc_pa"], ["-", "--", "-."], fau_blaues):
             axes.plot(data[axis], label=axis, color=color, ls=style)
-            axes.plot(filtered_data[axis], label=axis, color=color, ls=style, alpha=0.2)
+            #axes.plot(filtered_data[axis], color=color, ls=style, alpha=0.2)
 
         if plot_ssa:
-
             t = filtered_data["acc_si"].index.to_numpy()
             ssa_si = self.ssa.fit_transform(filtered_data["acc_si"].to_numpy().reshape(1, -1))
             ssa_ml = self.ssa.fit_transform(filtered_data["acc_ml"].to_numpy().reshape(1, -1))
-            # t = t[0:len(ssa_si[0])]
+
             axes.plot(
                 t,
                 ssa_si[1] + filtered_data["acc_si"].mean(),
