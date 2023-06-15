@@ -231,7 +231,7 @@ class EarGait(BaseEarGait):
     def cadence_dominant_freq(self: Self) -> float:
         """Get the cadence of a gait sequence based on dominant frequency of a walking bout."""
         if self.data is not None:
-            dataset_type = is_sensor_data(self.data, frame="body")
+            dataset_type = is_sensor_data(self.data, frame="body", check_gyr=False)
             filtered_data = butter_lowpass_filter(self.data, 20, self.sample_rate_hz / 2, 4)
             if dataset_type == "single":
                 results = self._single_cadence_dominant_freq(filtered_data, self.sample_rate_hz)

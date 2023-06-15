@@ -18,7 +18,7 @@ import pandas as pd
 
 from eargait import EarGait
 from eargait.event_detection import DiaoAdaptedEventDetection
-from eargait.preprocessing import aling_gravity_and_convert_ear_to_ebf, convert_ear_to_ebf, load
+from eargait.preprocessing import align_gravity_and_convert_ear_to_ebf, convert_ear_to_ebf, load
 from eargait.utils.example_data import get_mat_example_data_path
 
 # data directory
@@ -41,7 +41,7 @@ session.info
 #
 # Align session to gravity and transform coordinate system into body frame
 
-ear_data = aling_gravity_and_convert_ear_to_ebf(session)
+ear_data = align_gravity_and_convert_ear_to_ebf(session)
 
 # Alternatively, you can skip the gravity alignment by using the following function:  convert_ear_to_ebf
 # ear_data = convert_ear_to_ebf(session)

@@ -91,7 +91,7 @@ Transformation into the Foot Body Frame and Alignment to Gravity
 ----------------------------------------------------------------
 Some times an alignment with gravity is necessary. 
 
-The function :func:`~eargait.utils.preprocessing.rotations.aling_gravity_and_convert_ear_to_ebf` transforms data into eargait-ESF, then alignes data with gravity and then transforms it into body frame.
+The function :func:`~eargait.utils.preprocessing.rotations.align_gravity_and_convert_ear_to_ebf` transforms data into eargait-ESF, then alignes data with gravity and then transforms it into body frame.
 
 
 .. note:: Can only be applied for if data is in eargait-HAF.
