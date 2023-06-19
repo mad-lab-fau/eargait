@@ -23,7 +23,7 @@ import pandas as pd
 from eargait import EarGait
 from eargait.event_detection import DiaoAdaptedEventDetection
 from eargait.preprocessing import align_gravity_and_convert_ear_to_ebf, load
-from eargait.spatial_params import SpatialParamsExample
+from eargait.spatial_params import SpatialParamsRandomForest
 from eargait.utils.example_data import get_mat_example_data_path
 
 # path to data file (.txt or .mat) or data directory (only for .mat)
@@ -87,7 +87,7 @@ event_detection_algorithm = DiaoAdaptedEventDetection(
 # ------------------------------------------------
 # Note: SpatialParamsExample is an placeholder class.
 # Needs to be implemented by user if spatial parameters want to be estimated.
-spatial_method = SpatialParamsExample(target_sample_rate)
+spatial_method = SpatialParamsRandomForest(target_sample_rate)
 
 
 # %%

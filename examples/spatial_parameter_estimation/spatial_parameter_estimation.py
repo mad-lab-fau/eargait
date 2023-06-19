@@ -19,12 +19,12 @@ import pandas as pd
 
 from eargait import EarGait
 from eargait.event_detection import DiaoAdaptedEventDetection
-from eargait.preprocessing import aling_gravity_and_convert_ear_to_ebf, convert_ear_to_ebf, load
+from eargait.preprocessing import align_gravity_and_convert_ear_to_ebf, convert_ear_to_ebf, load
 from eargait.spatial_params import SpatialParamsRandomForest
-from eargait.utils.example_data import get_example_data_path
+from eargait.utils.example_data import get_mat_example_data_path
 
 # data directory
-data_path = get_example_data_path()
+data_path = get_mat_example_data_path()
 
 # %%
 # Loading the data
@@ -43,7 +43,7 @@ session.info
 #
 # Align session to gravity and transform coordinate system into body frame
 
-ear_data = aling_gravity_and_convert_ear_to_ebf(session)
+ear_data = align_gravity_and_convert_ear_to_ebf(session)
 
 # Alternatively, you can skip the gravity alignment by using the following function:  convert_ear_to_ebf
 # ear_data = convert_ear_to_ebf(session)
@@ -81,12 +81,11 @@ event_detection_algorithm = DiaoAdaptedEventDetection(
 # %%
 # Initializing spatial parameter estimation method
 # ------------------------------------------------
-#
-# age, gender and height must been known
-age = 64  # in years
-gender = "f"  # 'f' for females, or 'm' for males
-height = 171  # in cm
-spatial_method = SpatialParamsRandomForest(target_sample_rate, age, gender, height)
+# Two Alternatives
+# 1. spatial_method = SpatialParamsRandomForestDemographics(target_sample_rate, age, gender, height, weight)
+# 2. spatial_method = SpatialParamsCNN(target_sample_rate)
+
+spatial_method = SpatialParamsRandomForest(target_sample_rate)
 
 
 # %%
@@ -95,7 +94,10 @@ spatial_method = SpatialParamsRandomForest(target_sample_rate, age, gender, heig
 #
 # Recommended parameters:
 # sampling_rate_hz needs to correspond to target_sample_rate_hz <br />
-ear_gait = EarGait(target_sample_rate, event_detection_algorithm, spatial_method, True)
+ear_gait = EarGait(sample_rate_hz=target_sample_rate,
+                   event_detection_method=event_detection_algorithm,
+                   spatial_params_method=spatial_method,
+                   bool_use_event_list_consistent=True)
 
 # %%
 # Detect gait events of gait sequence
