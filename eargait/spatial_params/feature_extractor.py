@@ -38,7 +38,7 @@ class FeatureExtractor:
     def _calculate_features(self, data: SingleSensorData, gait_events: SingleSensorEventList):
         # butterworth lowpass filter
         filtered_data = butter_lowpass_filter(data, 20, self.sample_rate / 2, 4)
-        filtered_data = filtered_data.drop(columns=BF_GYR)
+        filtered_data = filtered_data.drop(columns=BF_GYR, errors="ignore")
 
         # dominant feq amplitude
         amplitude = pd.Series(self._amplitude_dominant_freq(filtered_data))

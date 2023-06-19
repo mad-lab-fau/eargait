@@ -25,7 +25,7 @@ class DataVectorLoader:
             for sensor, events in gait_events.items():
                 data_vector[sensor], realistic_stride_time[sensor] = self._get_data_vector_single(data[sensor], events)
                 assert data_vector[sensor].shape[0] != 0
-        return data_vector, realistic_stride_time
+        return data_vector, realistic_stride_time.to_numpy()
 
     def _get_data_vector_single(self, data: SingleSensorData, gait_events: SingleSensorEventList) -> pd.DataFrame:
         vectors = self._cut_data_into_vectors_using_event_list(data, gait_events)
@@ -54,7 +54,7 @@ class DataVectorLoader:
         return data
 
     def _consistency_check_stride_time(self, vectors_series):
-        realistic_stride_time = vectors_series.apply(lambda x: self._check_stride_time(x))
+        realistic_stride_time = vectors_series.apply(lambda x: self._check_stride_time(x))  # noqa
         return realistic_stride_time
 
     def _check_stride_time(self, x):

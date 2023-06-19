@@ -217,7 +217,7 @@ class BaseEventDetection(BaseEventDetectionGaitmap):
 
         for axis, style, color in zip(["acc_si", "acc_ml", "acc_pa"], ["-", "--", "-."], fau_blaues):
             axes.plot(data[axis], label=axis, color=color, ls=style)
-            #axes.plot(filtered_data[axis], color=color, ls=style, alpha=0.2)
+            # axes.plot(filtered_data[axis], color=color, ls=style, alpha=0.2)
 
         if plot_ssa:
             t = filtered_data["acc_si"].index.to_numpy()

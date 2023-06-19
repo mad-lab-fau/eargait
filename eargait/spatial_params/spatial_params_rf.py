@@ -11,7 +11,7 @@ from typing import Dict, TypeVar, Union
 import pandas as pd
 from sklearn.pipeline import Pipeline
 
-from eargait.spatial_params import FeatureExtractor, FeatureExtractorDemographics
+from eargait.spatial_params.feature_extractor import FeatureExtractor, FeatureExtractorDemographics
 from eargait.spatial_params.spatial_params_base import SpatialParamsBase
 from eargait.utils.helper_datatype import EventList
 from eargait.utils.helper_gaitmap import SensorData
@@ -26,13 +26,7 @@ class SpatialParamsRandomForest(SpatialParamsBase):
 
     sample_rate_hz: int
 
-    extractor_demographics: bool
-    age: int  # years
-    gender: str  # in ['m', 'f', 'w']
-    height: float  # cm
-    weight: int  # in kg
-
-    extractor: Union[FeatureExtractor, FeatureExtractorDemographics]
+    extractor: FeatureExtractor
     model_path: Path
     model: Pipeline
 
@@ -41,19 +35,9 @@ class SpatialParamsRandomForest(SpatialParamsBase):
     def __init__(
         self,
         sample_rate_hz,
-        extractor_demographics=False,
-        age=None,
-        gender=None,
-        height=None,
-        weight=None,
         model_path=None,
     ):
         self.sample_rate_hz = sample_rate_hz
-        self.extractor_demographics = extractor_demographics
-        self.age = age
-        self.height = height
-        self.weight = weight
-        self.gender = gender
         self.model_path = model_path
         self.model = None
         super().__init__()
@@ -78,6 +62,57 @@ class SpatialParamsRandomForest(SpatialParamsBase):
         return spatial
 
     def _check_subjects_characteristics(self):
+        # only necessary for random forest with demographics
+        pass
+
+    def _load_model(self):
+        if not self.model_path:
+            # find model path
+            self.model_path = HERE.joinpath(
+                "trained_models", "ml_randomforest", "2023_05_16_rf_" + str(self.sample_rate_hz) + "hz_regressor.pkl"
+            )
+
+        if not self.model_path.is_file():
+            potential_models = [
+                int(x.stem.split("hz")[0].split("_")[-1]) for x in HERE.iterdir() if (x.is_file() and "hz" in str(x))
+            ]
+            raise ValueError(
+                f"No model available for sample rate {self.sample_rate_hz}Hz. Model are given for: {potential_models}"
+            )
+
+        with open(self.model_path, "rb") as handler:
+            self.model = pickle.load(handler)
+
+    def _load_feature_extractor(self):
+        self.extractor = FeatureExtractor(self.sample_rate_hz)
+
+
+class SpatialParamsRandomForestDemographics(SpatialParamsRandomForest):
+    """Spatial Parameter Estimation Class using a pretrained Random Forest inclusing demographic features."""
+
+    age: int  # years
+    gender: str  # in ['m', 'f', 'w']
+    height: float  # cm
+    weight: int  # in kg
+
+    extractor: FeatureExtractorDemographics
+
+    def __init__(
+        self,
+        sample_rate_hz,
+        age,
+        gender,
+        height,
+        weight,
+        model_path=None,
+    ):
+        self.age = age
+        self.height = height
+        self.weight = weight
+        self.gender = gender
+        super().__init__(sample_rate_hz=sample_rate_hz, model_path=model_path)
+
+    def _check_subjects_characteristics(self):
         if self.gender and self.gender not in ["m", "f", "w"]:
             raise ValueError("Gender must be in ['m', 'f', 'w']")
         if self.age and 18 > self.age < 110:
@@ -90,14 +125,11 @@ class SpatialParamsRandomForest(SpatialParamsBase):
     def _load_model(self):
         if not self.model_path:
             # find model path
-            if not self.extractor_demographics:
-                self.model_path = HERE.joinpath(
-                    "trained_models", "ml_randomforest", "2023_05_15_rf_" + str(self.sample_rate_hz) + "hz_regressor.pkl"
-                )
-            else:
-                self.model_path = HERE.joinpath(
-                    "trained_models", "ml_randomforest", "2023_05_15_rf_" + str(self.sample_rate_hz) + "hz_regressor_withDemo.pkl"
-                )
+            self.model_path = HERE.joinpath(
+                "trained_models",
+                "ml_randomforest",
+                "2023_05_16_rf_" + str(self.sample_rate_hz) + "hz_regressor_withDemo.pkl",
+            )
         if not self.model_path.is_file():
             potential_models = [
                 int(x.stem.split("hz")[0].split("_")[-1]) for x in HERE.iterdir() if (x.is_file() and "hz" in str(x))
@@ -109,23 +141,7 @@ class SpatialParamsRandomForest(SpatialParamsBase):
         with open(self.model_path, "rb") as handler:
             self.model = pickle.load(handler)
 
-        # try:
-        #      # noqa
-        #    import pickle
-        #    with open(self.model_path, "rb") as handler:
-        #       self.model = pickle.load(handler)
-        # except ValueError:
-        #    import subprocess  # noqa
-        #    import sys  # noqa
-        #   subprocess.check_call([sys.executable, "-m", "pip", "install", "pickle5"])
-        #   import pickle5 as pickle  # noqa#
-        #    with open(self.model_path, "rb") as handler:
-        #        self.model = pickle.load(handler)
-
     def _load_feature_extractor(self):
-        if self.extractor_demographics is True:
-            self.extractor = FeatureExtractorDemographics(
-                self.sample_rate_hz, self.height, self.gender, self.age, self.weight
-            )
-        else:
-            self.extractor = FeatureExtractor(self.sample_rate_hz)
+        self.extractor = FeatureExtractorDemographics(
+            self.sample_rate_hz, self.height, self.gender, self.age, self.weight
+        )

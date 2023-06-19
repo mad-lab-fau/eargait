@@ -1,4 +1,4 @@
-"""Class spatial parameter using the inverted pendulum method by Zjilstra [1]"""
+"""Class spatial parameter using the inverted pendulum method by Zjilstra [1]."""
 
 from pathlib import Path
 from typing import Dict, TypeVar, Union

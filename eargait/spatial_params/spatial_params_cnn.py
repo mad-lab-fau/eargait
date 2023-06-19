@@ -16,7 +16,7 @@ import numpy as np
 import pandas as pd
 from joblib import Memory
 from sklearn.preprocessing import StandardScaler
-from tensorflow.keras import models
+from tensorflow.keras import models  # noqa
 
 from eargait.spatial_params.data_vector_loader import DataVectorLoader
 from eargait.spatial_params.spatial_params_base import SpatialParamsBase
@@ -59,13 +59,13 @@ class SpatialParamsCNN(SpatialParamsBase):
         self._load_scaler(memory=self.memory)
 
         data_vector, realistic_stride_time = self.dataloader.get_data_vector(data, event_list)
+        realistic_stride_time = np.insert(realistic_stride_time, 0, False)
         data_vector_normalized = self.normalize(data_vector)
         step_length = self.predict(data_vector_normalized)
-        #step_length = self._remove_entries_for_unrealistic_stride_time(step_length_raw, realistic_stride_time)
+        # step_length = self._remove_entries_for_unrealistic_stride_time(step_length_raw, realistic_stride_time)
 
         step_length_series = pd.Series(name="step_length", index=event_list.index, dtype="float64")
-        step_length_series.iloc[1::] = step_length
-        ### copied RF
+        step_length_series[realistic_stride_time] = step_length
         stride_length_series = step_length_series[1::] + step_length_series[0:-1]
         stride_length_series.name = "stride_length"
         spatial = pd.concat([step_length_series, stride_length_series], axis=1)
@@ -122,7 +122,9 @@ class SpatialParamsCNN(SpatialParamsBase):
         else:
             step_series = {}
             for sensor, sl in step_length.items():
-                step_series[sensor] = self._remove_entries_for_unrealistic_stride_time_single(sl, realistic_bool[sensor])
+                step_series[sensor] = self._remove_entries_for_unrealistic_stride_time_single(
+                    sl, realistic_bool[sensor]
+                )
         return step_series
 
     @staticmethod
