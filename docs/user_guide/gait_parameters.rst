@@ -7,7 +7,7 @@ Gait Parameters
 Spatio-temporal gait parameters on Step and Walking-Bout (i.e. average) level
 
 .. list-table::
-   :widths: 60 25 25 90
+   :widths: 85 25 40 90
    :header-rows: 1
 
 
@@ -39,7 +39,7 @@ Spatio-temporal gait parameters on Step and Walking-Bout (i.e. average) level
 Gait parameters on Walking-Bout (i.e. average) level
 
 .. list-table::
-   :widths: 80 25 25 80
+   :widths: 85 25 40 90
    :header-rows: 1
 
    * - Parameter
@@ -62,7 +62,7 @@ Gait parameters on Walking-Bout (i.e. average) level
      - cadence
      - steps/s
      - Ratio of duration of walking sequence to number of steps.
-   * - Cadence Dominant Frequency
+   * - Cadence dominant frequency
      - cadence_dom_freq
      - steps/s
      - Cadence based on dominant frequency.
