@@ -94,10 +94,12 @@ spatial_method = SpatialParamsRandomForest(target_sample_rate)
 #
 # Recommended parameters:
 # sampling_rate_hz needs to correspond to target_sample_rate_hz <br />
-ear_gait = EarGait(sample_rate_hz=target_sample_rate,
-                   event_detection_method=event_detection_algorithm,
-                   spatial_params_method=spatial_method,
-                   bool_use_event_list_consistent=True)
+ear_gait = EarGait(
+    sample_rate_hz=target_sample_rate,
+    event_detection_method=event_detection_algorithm,
+    spatial_params_method=spatial_method,
+    bool_use_event_list_consistent=True,
+)
 
 # %%
 # Detect gait events of gait sequence

@@ -162,13 +162,13 @@ class EarGait(BaseEarGait):
             assert self._has_event_list()
 
             if is_stride_list(self.event_list) == "single":
-                spatial_params = self.spatial_params_method.estimate(self.data, self.event_list)
+                spatial_tmp = self.spatial_params_method.estimate(self.data, self.event_list)
+                spatial_params = self._estimate_gait_velocity(spatial_tmp, self.temporal_params)
             else:
                 spatial_params = {}
                 for sensor, events in self.event_list.items():
-                    spatial_params[sensor] = self.spatial_params_method.estimate(
-                        data=self.data[sensor], event_list=events
-                    )
+                    spatial_tmp = self.spatial_params_method.estimate(data=self.data[sensor], event_list=events)
+                    spatial_params[sensor] = self._estimate_gait_velocity(spatial_tmp, self.temporal_params[sensor])
             self._spatial_params_memory = spatial_params
         return self._spatial_params_memory
 
@@ -268,14 +268,11 @@ class EarGait(BaseEarGait):
     def single_gait_parameters(average_spatiotemp, asy, si, vari, no_steps, cad, cad_harm):
         df = pd.Series(dtype="float64")
         df = pd.concat([df, average_spatiotemp.loc["mean"]])
-        df = pd.concat([df, asy, si])
-        df = pd.concat([df, vari])
         df = pd.concat([df, pd.Series(no_steps, index=["number_of_steps"])])
         df = pd.concat([df, pd.Series(cad, index=["cadence"])])
         df = pd.concat([df, pd.Series(cad_harm, index=["cadence_dom_freq"])])
-        velocity_harm = cad_harm * df.step_length
-        velocity = cad * df.step_length
-        df = pd.concat([df, pd.Series([velocity, velocity_harm], index=["gait_velocity", "gait_velocity_dom_freq"])])
+        df = pd.concat([df, asy, si])
+        df = pd.concat([df, vari])
         return df
 
     def plot(self: Self, plot_ssa: bool = False):

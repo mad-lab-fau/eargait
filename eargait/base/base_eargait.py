@@ -48,13 +48,15 @@ class BaseEarGait:
 
     @staticmethod
     def _single_step_counter(event_list):
-        return event_list.ic.shape[0]
+        return int(event_list.ic.shape[0])
 
     @staticmethod
     def _single_cadence(event_list, no_steps, sample_rate) -> int:
+        if no_steps == 0:
+            return 0
         ics = event_list.ic.to_numpy()
         duration = (ics[-1] - ics[0]) / sample_rate
-        return (no_steps - 0) / duration
+        return 60 / duration * (no_steps - 1)  # steps/min
 
     @staticmethod
     def _single_cadence_dominant_freq(filtered_data, sample_rate_hz):
@@ -76,7 +78,7 @@ class BaseEarGait:
         dominant_frequency = (
             1 / (np.argmax(auto_corr[:, lower_bound:], axis=-1) + lower_bound).astype(float) * sample_rate_hz
         )
-        return dominant_frequency[0]
+        return dominant_frequency[0] * 60  # steps/min
 
     @staticmethod
     def _single_consistent_event_list(event_list):
@@ -121,6 +123,11 @@ class BaseEarGait:
             raise ValueError(
                 "Subjects characteristic are not given: age, gender height. Please set by using self.set_subject_data"
             )
+
+    @staticmethod
+    def _estimate_gait_velocity(spatial: pd.DataFrame, temporal: pd.DataFrame) -> pd.DataFrame:
+        spatial.insert(2, "gait_velocity", spatial.step_length / temporal.step_time)
+        return spatial
 
     def _clear_all_variable(self):
         self._temporal_params_memory = None

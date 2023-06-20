@@ -35,6 +35,10 @@ Spatio-temporal gait parameters on Step and Walking-Bout (i.e. average) level
      - stride_length
      - m
      -
+   * - Gait velocity
+     - gait_velocity
+     - m/s
+     - Ratio :math:`\frac{step length}{step time}`
 |
 Gait parameters on Walking-Bout (i.e. average) level
 
@@ -50,21 +54,13 @@ Gait parameters on Walking-Bout (i.e. average) level
      - number_of_steps
      - total number
      -
-   * - Gait velocity
-     - gait_velocity
-     - m/s
-     - To Do
-   * - Gait velocity dominant freq
-     - gait_velocity_dom_freq
-     - m/s
-     - To Do
    * - Cadence
      - cadence
-     - steps/s
-     - Ratio of duration of walking sequence to number of steps.
+     - steps/min
+     - Candence as steps per minute: :math:`\frac{60s}{t_{last_IC}-t_{first_IC}}* number\ of\ steps`
    * - Cadence dominant frequency
      - cadence_dom_freq
-     - steps/s
+     - steps/min
      - Cadence based on dominant frequency.
    * - Standard deviation
      - *_std
