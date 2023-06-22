@@ -13,13 +13,13 @@ from eargait.utils.gait_parameters import get_temporal_params
 from eargait.utils.helpers import load_pickle
 
 HERE = Path(__file__).parent
-TEST_DATA = HERE.joinpath("test_data", "short_example_data_acc_200hz.csv")
+TEST_DATA = HERE.joinpath("test_data", "short_example_data_acc_50hz.csv")
 
 
 class TestImport(TestCase):
     def test_spatial_method_cnn(self):
         data = pd.read_csv(TEST_DATA, index_col=0)
-        sample_rate = 200
+        sample_rate = 50
         diao = DiaoAdaptedEventDetection(sample_rate)
 
         spatial = SpatialParamsCNN(sample_rate)

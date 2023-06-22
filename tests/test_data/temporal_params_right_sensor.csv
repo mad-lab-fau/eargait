@@ -1,3 +1,24 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b2780cfe554a51161852905bf178b1dafcc8f70a7a1dcffe46cf9fe914dfb1a0
-size 711
+s_id,stride_time,stance_time,swing_time,step_time,side
+0,,,,,ipsilateral
+1,,,,0.56,contralateral
+2,1.1,0.62,0.48,0.54,ipsilateral
+3,1.08,0.62,0.46,0.54,contralateral
+4,1.06,0.6,0.46,0.52,ipsilateral
+5,1.04,0.58,0.46,0.52,contralateral
+6,1.04,0.58,0.46,0.52,ipsilateral
+7,1.04,0.6,0.44,0.52,contralateral
+8,1.06,0.6,0.46,0.54,ipsilateral
+9,1.06,0.62,0.44,0.52,contralateral
+10,1.08,0.6,0.48,0.56,ipsilateral
+11,1.12,0.68,0.44,0.56,contralateral
+12,2.4,0.6,1.8,1.84,ipsilateral
+13,2.4,2.08,0.32,0.56,contralateral
+14,1.1,0.64,0.46,0.54,ipsilateral
+15,1.08,0.62,0.46,0.54,contralateral
+16,1.06,0.58,0.48,0.52,ipsilateral
+17,1.02,0.58,0.44,0.5,contralateral
+18,1.02,0.58,0.44,0.52,ipsilateral
+19,1.06,0.62,0.44,0.54,contralateral
+20,1.06,0.62,0.44,0.52,ipsilateral
+21,1.04,0.6,0.44,0.52,contralateral
+22,1.06,0.6,0.46,0.54,ipsilateral
