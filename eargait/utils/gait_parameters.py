@@ -51,6 +51,7 @@ def _get_single_temporal_params(
         df.loc[event_list.side == lateral] = _get_single_temporal_params_single_lateral(tmp, sampling_rate_hz)
     for col in df.columns:
         df[col] = df[col].astype(float)
+    df["step_time"] = event_list.ic.diff() / sampling_rate_hz
     df["side"] = event_list.side
     return df
 
@@ -59,15 +60,16 @@ def _get_single_temporal_params_single_lateral(
     event_list: SingleSensorEventList, sampling_rate_hz: int
 ) -> pd.DataFrame:
     df = pd.DataFrame(index=event_list.index, columns=["stride_time", "stance_time", "swing_time"])
+    index = df.index[1::]
     df["stride_time"] = pd.Series(
-        (event_list.ic.diff().shift(-1).iloc[0:-1] / sampling_rate_hz).to_numpy(), index=df.index[0:-1]
+        (event_list.ic.diff().shift(-1).iloc[0:-1] / sampling_rate_hz).to_numpy(), index=index
     )
     stance = pd.Series(
         (event_list.tc.iloc[1:].to_numpy() - event_list.ic.iloc[0:-1].to_numpy()) / sampling_rate_hz,
-        index=df.index[0:-1],
+        index=index,
     )
     df["swing_time"] = pd.Series(
-        np.array((event_list.ic.iloc[1::] - event_list.tc.iloc[1::])) / sampling_rate_hz, index=df.index[0:-1]
+        np.array((event_list.ic.iloc[1::] - event_list.tc.iloc[1::])) / sampling_rate_hz, index=index
     )
     df["stance_time"] = stance
     _sanity_check_temporal_parameters(df)
@@ -81,12 +83,12 @@ def get_average_params(params: Union[Dict, pd.DataFrame]) -> Union[Dict, pd.Data
             params = params.drop(columns="side").astype(float)
         return params.describe().loc[["mean", "std"]]
     # else: multi sensor
-    avaerage_params = {}
+    average_params = {}
     for pos, param in params.items():  # noqa
         if "side" in param.columns:
             param = param.drop(columns="side").astype(float)
-        avaerage_params[pos] = param.describe().loc[["mean", "std"]]
-    return avaerage_params
+        average_params[pos] = param.describe().loc[["mean", "std"]]
+    return average_params
 
 
 def get_average_spatial_params(spatial_params: Union[Dict, pd.DataFrame]) -> Union[Dict, pd.DataFrame]:

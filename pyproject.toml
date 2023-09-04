@@ -9,20 +9,23 @@ homepage = "https://github.com/mad-lab-fau/eargait"
 repository = "https://github.com/mad-lab-fau/eargait"
 
 [tool.poetry.dependencies]
-python = ">=3.8,<4.0"
+python = ">=3.8,<3.12"
 joblib = ">=1.2.0"
 tpcp = ">=0.12, <1.0.0"
 scipy = "^1, !=1.6.0"
+scikit-learn = "1.2.0"
 pyts = "^0.11.0"
 nilspodlib = "^3.2.2"
 fau-colors = "^1.0.1"
-signialib = "^2.3.0"
+signialib = "^2.5.0"
 pandas = ">=1.5.2"
+tensorflow = "^2.10.0"
 numba =  [
     {version = ">=0.55"},
     {version = ">=0.55.2", markers = "sys_platform == 'darwin' and platform_machine == 'arm64'"}
 ]
 numpy = ">=1.20"
+debugpy = "1.6.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.1"
