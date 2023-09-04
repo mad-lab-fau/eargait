@@ -17,7 +17,7 @@ scikit-learn = "1.2.0"
 pyts = "^0.11.0"
 nilspodlib = "^3.2.2"
 fau-colors = "^1.0.1"
-signialib = "^2.3.0"
+signialib = "^2.5.0"
 pandas = ">=1.5.2"
 tensorflow = "^2.10.0"
 numba =  [
@@ -25,6 +25,7 @@ numba =  [
     {version = ">=0.55.2", markers = "sys_platform == 'darwin' and platform_machine == 'arm64'"}
 ]
 numpy = ">=1.20"
+debugpy = "1.6.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.1"

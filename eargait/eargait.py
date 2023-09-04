@@ -275,7 +275,7 @@ class EarGait(BaseEarGait):
         df = pd.concat([df, vari])
         return df
 
-    def plot(self: Self, plot_gait_events: bool = True, plot_ssa: bool = False, time_index: str = None):
+    def plot(self: Self, plot_gait_events: bool = True, plot_ssa: bool = False):
         """Plot gait data and events."""
         if plot_gait_events:
             assert self._has_event_list()
