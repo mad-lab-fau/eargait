@@ -67,17 +67,20 @@ class SpatialParamsRandomForest(SpatialParamsBase):
 
     def _load_model(self):
         if not self.model_path:
-            # find model path
+            # find model pathta
             self.model_path = HERE.joinpath(
                 "trained_models", "ml_randomforest", "2023_05_16_rf_" + str(self.sample_rate_hz) + "hz_regressor.pkl"
             )
 
         if not self.model_path.is_file():
             potential_models = [
-                int(x.stem.split("hz")[0].split("_")[-1]) for x in HERE.iterdir() if (x.is_file() and "hz" in str(x))
+                int(x.stem.split("hz")[0].split("_")[-1])
+                for x in HERE.joinpath("trained_models", "ml_randomforest").iterdir()
+                if (x.is_file() and "hz" in str(x))
             ]
             raise ValueError(
-                f"No model available for sample rate {self.sample_rate_hz}Hz. Model are given for: {potential_models}"
+                f"No model available for sample rate {self.sample_rate_hz}Hz. "
+                f"Model are given for: {set(potential_models)} Hz"
             )
 
         with open(self.model_path, "rb") as handler:
