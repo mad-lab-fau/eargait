@@ -733,6 +733,27 @@ def is_single_sensor_stride_list(
     return True
 
 
+def has_gyroscope_data(data: SensorData) -> bool:
+    """Check if a dataset contains gyropcope data.
+
+    Parameters
+    ----------
+    data: SensorData
+        Dataset(s) to be checked.
+
+    """
+    type = is_sensor_data(data, check_gyr=False)
+    if type == "single":
+        return _has_gyroscope_data_single(data)
+    else:
+        res = {name: _has_gyroscope_data_single(data[name]) for name in get_multi_sensor_names(data)}
+        return any(res.values())
+
+
+def _has_gyroscope_data_single(data: SingleSensorData):
+    return set(BF_GYR).issubset(data.columns) or set(SF_GYR).issubset(data.columns)
+
+
 # ROTATIONs
 def sliding_window_view(arr: np.ndarray, window_length: int, overlap: int, nan_padding: bool = False) -> np.ndarray:
     """Create a sliding window view of an input array with given window length and overlap.
@@ -1351,7 +1372,7 @@ def _rotate_sensor(
 
 
 def rotate_dataset(
-    dataset: SensorData, rotation: Union[Rotation, Dict[str, Rotation]], check_gyr: bool = True
+    dataset: SensorData, rotation: Union[Rotation, Dict[str, Rotation]], check_gyr: bool = False
 ) -> SensorData:
     """Apply a rotation to acc and gyro data of a dataset.
 
@@ -1393,13 +1414,14 @@ def rotate_dataset(
 
     """
     dataset_type = is_sensor_data(dataset, frame="sensor", check_gyr=check_gyr)
+    gyr_avail = has_gyroscope_data(dataset)
     if dataset_type == "single":
         if isinstance(rotation, dict):
             raise ValueError(
                 "A Dictionary for the `rotation` parameter is only supported if a MultiIndex dataset (named sensors) is"
                 " passed."
             )
-        return _rotate_sensor(dataset, rotation, inplace=False, gyr_avail=check_gyr)
+        return _rotate_sensor(dataset, rotation, inplace=False, gyr_avail=gyr_avail)
 
     rotation_dict = rotation
     if not isinstance(rotation_dict, dict):
@@ -1412,7 +1434,7 @@ def rotate_dataset(
         rotated_dataset = dataset.copy()
         original_cols = dataset.columns
     for key in rotation_dict.keys():
-        test = _rotate_sensor(dataset[key], rotation_dict[key], inplace=False, gyr_avail=check_gyr)
+        test = _rotate_sensor(dataset[key], rotation_dict[key], inplace=False, gyr_avail=gyr_avail)
         rotated_dataset[key] = test
 
     if isinstance(dataset, pd.DataFrame):

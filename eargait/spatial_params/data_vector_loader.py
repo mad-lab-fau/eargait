@@ -37,9 +37,8 @@ class DataVectorLoader:
     def _cut_data_into_vectors_using_event_list(data: SingleSensorData, event_list: SingleSensorEventList):
         ic_start = event_list.ic.iloc[0:-1]
         ic_stop = event_list.ic.iloc[1::]
-        data_vectors = pd.DataFrame(
-            [data.loc[start:stop] for start, stop in zip(ic_start, ic_stop)], index=ic_start.index
-        )
+        data_list = [data.loc[start:stop] for start, stop in zip(ic_start, ic_stop)]
+        data_vectors = pd.DataFrame({"data": data_list}, index=ic_start.index)
         return data_vectors.squeeze()
 
     def _get_padded_vectors(self, data_vector: pd.Series):
