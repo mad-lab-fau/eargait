@@ -1,4 +1,4 @@
-"""from pathlib import Path
+from pathlib import Path
 from unittest import TestCase
 
 import pandas as pd
@@ -32,4 +32,3 @@ class TestImport(TestCase):
 
         ear_gait.detect(data)
         gait_params = ear_gait.get_gait_parameters()
-"""
