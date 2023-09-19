@@ -21,7 +21,7 @@ def get_mat_example_data_path() -> Path:
 
 def get_txt_example_data_path() -> Path:
     # data directory
-    data_dir = HERE.joinpath("example_data/txt_file/08-03-2023_11-12-51_txt_example_no_gait_data.txt")
+    data_dir = HERE.joinpath("example_data/txt_file/walking_50Hz_BMI270.txt")
     return data_dir
 
 

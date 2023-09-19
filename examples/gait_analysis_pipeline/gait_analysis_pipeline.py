@@ -21,7 +21,7 @@ The used gait event detection method is based on the work of Diao et al. [1]_ wi
 
 from eargait import EarGait
 from eargait.event_detection import DiaoAdaptedEventDetection
-from eargait.spatial_params import SpatialParamsExample
+from eargait.spatial_params import SpatialParamsRandomForest
 
 # %%
 # Loading the data
@@ -54,7 +54,7 @@ event_detection_algorithm = DiaoAdaptedEventDetection(
 # ------------------------------------------------
 # Note: SpatialParamsExample is a placeholder class.
 # Needs to be implemented by user if spatial parameters want to be estimated.
-spatial_method = SpatialParamsExample(target_sample_rate)
+spatial_method = SpatialParamsRandomForest(target_sample_rate)
 
 # %%
 # Initializing Gait Analysis Pipeline

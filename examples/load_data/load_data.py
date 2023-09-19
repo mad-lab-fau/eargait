@@ -145,7 +145,7 @@ import matplotlib.pyplot as plt
 fig, axes = plt.subplots(2, 1, sharex=True)
 acc = aligned_session.get_dataset_by_position("ha_left").acc.data_as_df()
 axes[0].plot(acc, label=acc.columns)
-axes[0].set_ylabel("Acceleration [g]")
+axes[0].set_ylabel("Acceleration [m/s$^2$]")
 gyro = aligned_session.get_dataset_by_position("ha_left").gyro.data_as_df()
 axes[1].plot(gyro, label=gyro.columns)
 axes[1].set_ylabel("Gyroscope [°/s]")
