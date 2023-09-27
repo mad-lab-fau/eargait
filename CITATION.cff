@@ -20,16 +20,24 @@ preferred-citation:
   - family-names: "Seifer"
     given-names: "Ann-Kristin"
     orcid: "https://orcid.org/0000-0002-5891-218X"
+  - family-names: "Dorschky"
+    given-names: "Eva"
+    orcid: "https://orcid.org/0000-0001-8708-0426"
   - family-names: "Küderle"
     given-names: "Arne"
     orcid: "https://orcid.org/0000-0002-5686-281X"
+  - family-names: "Moradi"
+    given-names: "Hamid"
+    orcid: "https://orcid.org/0009-0001-2715-8591"
+  - family-names: "Hannemann"
+    given-names: "Ronny"
+    orcid: "https://orcid.org/0000-0002-9651-0966"
   - family-names: "Eskofier"
     given-names: "Bjoern M."
     orcid: "https://orcid.org/0000-0002-0417-0336"
-  doi: to be done
-  journal: "To be done"
-  start: XX
-  title:"eargait - The Gait Analysis Package for Ear-Worn IMU Sensors"
-  issue: XX
-  volume: X
-  year: 2022
+  doi: 10.3390/s23146565
+  journal: "Sensors"
+  title: "EarGait: Estimation of Temporal Gait Parameters from Hearing Aid Integrated Inertial Sensors"
+  issue: 24
+  volume: 23
+  year: 2023
