@@ -7,22 +7,26 @@ import numpy as np
 from signialib import SIGNIA_CAL_PATH, Session
 
 
-def load(path: str, target_sample_rate_hz: int = 0, skip_calibration=False):
+def load(path: str, target_sample_rate_hz: int = 0, skip_calibration: bool = False, calib_path: str = None):
     """Load motion data recorded using signia hearing aids.
 
     Parameters
     ----------
-    path
+    path:
         Local path of folder containing the recording.
 
-    target_sample_rate_hz
+    target_sample_rate_hz:
         The target sampling rate of the data. The target sampling rate only has to be provided, if data
         should be resampled to a lower sampling rate.
         Default 0 means, no resampling.
 
-    skip_calibration
+    skip_calibration:
         If True, (Ferraris) calibration is skipped. It's strongly recommended to use calibration.
         Calibration file for each sensor is stored in signia lib.
+
+    calib_path:
+        Folder containing the calibration files for given IMU sensors.
+        If None, the default path by signialib SIGNIA_CAL_PATH is used. Can only be set if ´skip_calibration´ is False.
 
     Returns
     -------
@@ -43,15 +47,18 @@ def load(path: str, target_sample_rate_hz: int = 0, skip_calibration=False):
         _check_valid_resample_rate(session.info.sampling_rate_hz[0], target_sample_rate_hz)
     else:
         target_sample_rate_hz = session.info.sampling_rate_hz[0]
+
     if skip_calibration:
+        if calib_path is not None:
+            raise ValueError("Variable `calib_path` can only be set if `skip_calibration=False`.")
         warnings.warn("Calibration was skipped. Calibration is strongly recommended.")
         if len(session.datasets) == 2:
             session = session.align_to_syncregion()
-        else:
-            warnings.warn("Single dataset in session, alignment not necessary.")
         session = session.resample(target_sample_rate_hz)
     else:
-        session = session.align_calib_resample(resample_rate_hz=target_sample_rate_hz, calib_path=SIGNIA_CAL_PATH)
+        if calib_path is None:
+            calib_path = SIGNIA_CAL_PATH
+        session = session.align_calib_resample(resample_rate_hz=target_sample_rate_hz, calib_path=calib_path)
     return session
 
 
