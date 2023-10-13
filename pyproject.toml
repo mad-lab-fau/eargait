@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "eargait"
-version = "2.1.0"
+version = "2.2.0"
 description = "*Eargait* provides a set of algorithms and functions to process IMU data recorded with ear-worn IMU sensors and to estimate characteristic gait parameters. "
 authors = ["Ann-Kristin Seifer <ann-kristin.seifer@fau.de>",
             "Arne Küderle <arne.kuederle@fau.de>"]
