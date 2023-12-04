@@ -7,6 +7,7 @@ from signialib import Session
 
 from eargait.preprocessing.load_data_helpers import load
 from eargait.preprocessing.rotations import align_gravity_and_convert_ear_to_ebf, convert_ear_to_ebf
+from eargait.utils import StaticWindowGravityAlignment
 
 HERE = Path(__file__).parent
 
@@ -32,6 +33,7 @@ class TestImport(TestCase):
         with open(HERE.joinpath("test_data/align_to_gravity_converted_to_ebf.pickle"), "rb") as handle:
             reference_data_ebf = pickle.load(handle)
         session = load(HERE.joinpath("test_data/subject01"))
-        data_ebf = align_gravity_and_convert_ear_to_ebf(session)
+        gravity_alignment_method = StaticWindowGravityAlignment(sampling_rate_hz=session.info.sampling_rate_hz[0])
+        data_ebf = align_gravity_and_convert_ear_to_ebf(session, gravity_alignment_method)
         for key, val in data_ebf.items():
             pd.testing.assert_frame_equal(val, reference_data_ebf[key])

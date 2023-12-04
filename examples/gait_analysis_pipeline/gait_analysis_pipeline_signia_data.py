@@ -20,10 +20,7 @@ The used gait event detection method is based on the work of Diao et al. [1]_ wi
 # For this we take some example data that contains regular walking movements.
 import pandas as pd
 
-from eargait import EarGait
-from eargait.event_detection import DiaoAdaptedEventDetection
 from eargait.preprocessing import align_gravity_and_convert_ear_to_ebf, load
-from eargait.spatial_params import SpatialParamsRandomForest
 from eargait.utils.example_data import get_mat_example_data_path
 
 # path to data file (.txt or .mat) or data directory (only for .mat)
@@ -46,8 +43,12 @@ session.info
 # ---------------------------------------------------------
 #
 # Align session to gravity and transform coordinate system into body frame
+# Alternatively, you can skip the gravity alignment by using the following function:  convert_ear_to_ebf
+# Alternatively, you can you the following function for gravity alignment:  TrimMeanGravityAlignment
+from eargait.utils import StaticWindowGravityAlignment, TrimMeanGravityAlignment
 
-ear_data = align_gravity_and_convert_ear_to_ebf(session)
+gravity_method = StaticWindowGravityAlignment(target_sample_rate)
+ear_data = align_gravity_and_convert_ear_to_ebf(session, gravity_method)
 
 # Alternatively, you can skip the gravity alignment by using the following function:  convert_ear_to_ebf
 # ear_data = convert_ear_to_ebf(session)
@@ -78,6 +79,8 @@ for side in ear_data.keys():
 # `sampling_rate_hz` needs to correspond to target_sample_rate_hz,
 # * window_length` should be equal to sampling_rate_hz.
 
+from eargait.event_detection import DiaoAdaptedEventDetection
+
 event_detection_algorithm = DiaoAdaptedEventDetection(
     sample_rate_hz=target_sample_rate, window_length=target_sample_rate
 )
@@ -85,8 +88,12 @@ event_detection_algorithm = DiaoAdaptedEventDetection(
 # %%
 # Initializing spatial parameter estimation method
 # ------------------------------------------------
-# Note: SpatialParamsExample is an placeholder class.
 # Needs to be implemented by user if spatial parameters want to be estimated.
+# SpatialParamsRandomForest is the recommended method.
+# Alternatively, you can use one of the following methods: SpatialParamsRandomForestDemographics, SpatialParamsCNN
+
+from eargait.spatial_params import SpatialParamsRandomForest
+
 spatial_method = SpatialParamsRandomForest(target_sample_rate)
 
 
@@ -96,6 +103,9 @@ spatial_method = SpatialParamsRandomForest(target_sample_rate)
 #
 # Recommended parameters:
 # `sampling_rate_hz`needs to correspond to `target_sample_rate_hz`.
+
+from eargait import EarGait
+
 ear_gait = EarGait(
     sample_rate_hz=target_sample_rate,
     event_detection_method=event_detection_algorithm,
