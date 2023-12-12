@@ -44,10 +44,10 @@ session.info
 #
 # Align session to gravity and transform coordinate system into body frame
 # Alternatively, you can skip the gravity alignment by using the following function:  convert_ear_to_ebf
-# Alternatively, you can you the following function for gravity alignment:  TrimMeanGravityAlignment
+# Alternatively, you can you the following function for gravity alignment:  StaticWindowGravityAlignment
 from eargait.utils import StaticWindowGravityAlignment, TrimMeanGravityAlignment
 
-gravity_method = StaticWindowGravityAlignment(target_sample_rate)
+gravity_method = TrimMeanGravityAlignment(target_sample_rate)
 ear_data = align_gravity_and_convert_ear_to_ebf(session, gravity_method)
 
 # Alternatively, you can skip the gravity alignment by using the following function:  convert_ear_to_ebf

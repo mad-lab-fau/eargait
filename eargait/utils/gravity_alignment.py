@@ -39,12 +39,14 @@ class BaseGravityAlignment(Algorithm):
         if dataset_type == "single":
             # build rotation for dataset from acc and gravity
             rotation = self.get_gravity_rotation(acc_vector, gravity)
+            rot_in_degrees = rotation.as_euler("xyz", degrees=True)
         else:
             # build rotation dict for each dataset from acc dict and gravity
             rotation = {
                 name: self.get_gravity_rotation(acc_vector[name], gravity) for name in get_multi_sensor_names(dataset)
             }
-        return rotate_dataset(dataset, rotation)
+            rot_in_degrees = {name: rot.as_euler("xyz", degrees=True) for name, rot in rotation.items()}
+        return rotate_dataset(dataset, rotation), rot_in_degrees
 
     @staticmethod
     def get_gravity_rotation(gravity_vector: np.ndarray, expected_gravity: np.ndarray = GRAV_VEC) -> Rotation:
@@ -83,6 +85,7 @@ class StaticWindowGravityAlignment(BaseGravityAlignment):
     acc_vector: Union[np.ndarray, Dict[Hashable, np.ndarray]]
 
     dataset_aligned_: SensorData
+    rotation_: Rotation
 
     def __init__(
         self,
@@ -101,7 +104,9 @@ class StaticWindowGravityAlignment(BaseGravityAlignment):
 
     def align_to_gravity(self, dataset: SensorData):
         self.acc_vector = self._get_acc_grav_vector_static_period(dataset)
-        self.dataset_aligned_ = self._compute_rotation_and_align_to_gravity(dataset, self.acc_vector, self.gravity)
+        self.dataset_aligned_, self.rotation_ = self._compute_rotation_and_align_to_gravity(
+            dataset, self.acc_vector, self.gravity
+        )
 
     def _get_acc_grav_vector_static_period(self, dataset: SensorData) -> Union[np.ndarray, Dict[Hashable, np.ndarray]]:
         dataset_type = is_sensor_data(dataset, check_gyr=False)
@@ -151,6 +156,7 @@ class TrimMeanGravityAlignment(BaseGravityAlignment):
     acc_vector: Union[np.ndarray, Dict[Hashable, np.ndarray]]
 
     dataset_aligned_: SensorData
+    rotation_: Rotation
 
     def __init__(
         self,
@@ -170,7 +176,9 @@ class TrimMeanGravityAlignment(BaseGravityAlignment):
 
     def align_to_gravity(self, dataset: SensorData):
         acc_vector = self._get_acc_grav_vector_trimmed_mean(dataset)
-        self.dataset_aligned_ = self._compute_rotation_and_align_to_gravity(dataset, acc_vector, self.gravity)
+        self.dataset_aligned_, self.rotation_ = self._compute_rotation_and_align_to_gravity(
+            dataset, acc_vector, self.gravity
+        )
 
     def _get_acc_grav_vector_trimmed_mean(self, dataset: SensorData) -> Union[np.ndarray, Dict[Hashable, np.ndarray]]:
         acc_vector: Union[np.ndarray, Dict[Hashable, np.ndarray]]

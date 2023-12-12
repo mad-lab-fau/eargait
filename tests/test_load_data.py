@@ -6,8 +6,13 @@ import pandas as pd
 from signialib import Session
 
 from eargait.preprocessing.load_data_helpers import load
-from eargait.preprocessing.rotations import align_gravity_and_convert_ear_to_ebf, convert_ear_to_ebf
-from eargait.utils import StaticWindowGravityAlignment
+from eargait.preprocessing.rotations import (
+    align_dataset_to_gravity,
+    align_gravity_and_convert_ear_to_ebf,
+    convert_ear_to_ebf,
+    convert_ear_to_esf,
+)
+from eargait.utils import StaticWindowGravityAlignment, TrimMeanGravityAlignment
 
 HERE = Path(__file__).parent
 
@@ -29,11 +34,31 @@ class TestImport(TestCase):
         for key, val in data_ebf.items():
             pd.testing.assert_frame_equal(val, reference_data_ebf[key])
 
-    def test_align_to_gravity_convert_to_ebf(self):
+    def test_static_gravity_alignment_and_convert_ebf(self):
         with open(HERE.joinpath("test_data/align_to_gravity_converted_to_ebf.pickle"), "rb") as handle:
             reference_data_ebf = pickle.load(handle)
         session = load(HERE.joinpath("test_data/subject01"))
         gravity_alignment_method = StaticWindowGravityAlignment(sampling_rate_hz=session.info.sampling_rate_hz[0])
         data_ebf = align_gravity_and_convert_ear_to_ebf(session, gravity_alignment_method)
         for key, val in data_ebf.items():
+            pd.testing.assert_frame_equal(val, reference_data_ebf[key])
+
+    def test_static_gravity_alignment(self):
+        with open(HERE.joinpath("test_data/align_to_gravity_static_method.pickle"), "rb") as handle:
+            reference_data_ebf = pickle.load(handle)
+        session = load(HERE.joinpath("test_data/subject01"))
+        dataset_sf = convert_ear_to_esf(session)
+        gravity_alignment_method = StaticWindowGravityAlignment(sampling_rate_hz=session.info.sampling_rate_hz[0])
+        dataset_aligned = align_dataset_to_gravity(dataset_sf, gravity_alignment_method)
+        for key, val in dataset_aligned.items():
+            pd.testing.assert_frame_equal(val, reference_data_ebf[key])
+
+    def test_trim_gravity_alignment(self):
+        with open(HERE.joinpath("test_data/align_to_gravity_trim_method.pickle"), "rb") as handle:
+            reference_data_ebf = pickle.load(handle)
+        session = load(HERE.joinpath("test_data/subject01"))
+        dataset_sf = convert_ear_to_esf(session)
+        gravity_alignment_method = TrimMeanGravityAlignment(sampling_rate_hz=session.info.sampling_rate_hz[0])
+        dataset_aligned = align_dataset_to_gravity(dataset_sf, gravity_alignment_method)
+        for key, val in dataset_aligned.items():
             pd.testing.assert_frame_equal(val, reference_data_ebf[key])
