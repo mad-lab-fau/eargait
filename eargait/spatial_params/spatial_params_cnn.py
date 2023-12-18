@@ -33,6 +33,7 @@ class SpatialParamsCNN(SpatialParamsBase):
     """Spatial Parameter Estimation Class using a pretrained CNN."""
 
     sample_rate_hz: int
+    grav_alignment_method: Optional[str]  # trim or static
 
     model_path: Path
     model = None
@@ -44,10 +45,12 @@ class SpatialParamsCNN(SpatialParamsBase):
     def __init__(
         self,
         sample_rate_hz,
+        grav_alignment_method="trim",
         model_path=None,
         memory: Optional[Memory] = None,
     ):
         self.sample_rate_hz = sample_rate_hz
+        self.grav_alignment_method = grav_alignment_method
         self.dataloader = DataVectorLoader(sample_rate_hz)
         self.model_path = model_path
         self.memory = memory
@@ -83,9 +86,16 @@ class SpatialParamsCNN(SpatialParamsBase):
         return step_length.squeeze()
 
     def _load_model(self, memory: Memory):  # noqa: unused-argument
+        if self.grav_alignment_method != "static":
+            raise NotImplementedError(
+                "Only static gravity alignment is implemented for CNN.´: gravity_alignment_method='static'"
+            )
+
         if not self.model_path:
             # find model path
-            self.model_path = HERE.joinpath("trained_models", "dl_cnn", str(self.sample_rate_hz) + "hz_acc")
+            self.model_path = HERE.joinpath(
+                "trained_models", "dl_cnn", str(self.sample_rate_hz) + "hz_acc_" + self.grav_alignment_method
+            )
         self.model = models.load_model(self.model_path)
 
     def _load_scaler(self, memory: Memory):  # noqa: unused-argument

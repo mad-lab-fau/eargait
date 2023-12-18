@@ -6,7 +6,7 @@ Grid Search was performed using a 5 fold grouped cross validation, final model w
 """
 import pickle
 from pathlib import Path
-from typing import Dict, TypeVar, Union
+from typing import Dict, Optional, TypeVar, Union
 
 import pandas as pd
 from sklearn.pipeline import Pipeline
@@ -25,21 +25,25 @@ class SpatialParamsRandomForest(SpatialParamsBase):
     """Spatial Parameter Estimation Class using a pretrained Random Forest."""
 
     sample_rate_hz: int
-
-    extractor: FeatureExtractor
+    grav_alignment_method: Optional[str]  # trim or static
     model_path: Path
-    model: Pipeline
 
-    step_length_ = None
+    model: Pipeline
+    extractor: FeatureExtractor
+
+    step_length_: pd.DataFrame
 
     def __init__(
         self,
         sample_rate_hz,
+        grav_alignment_method="static",
         model_path=None,
     ):
         self.sample_rate_hz = sample_rate_hz
+        self.grav_alignment_method = grav_alignment_method
         self.model_path = model_path
         self.model = None
+        self.extractor = None
         super().__init__()
 
     def estimate(self, data: SensorData, event_list: EventList) -> Union[Dict, pd.DataFrame]:
@@ -67,10 +71,24 @@ class SpatialParamsRandomForest(SpatialParamsBase):
 
     def _load_model(self):
         if not self.model_path:
-            # find model pathta
-            self.model_path = HERE.joinpath(
-                "trained_models", "ml_randomforest", "2023_05_16_rf_" + str(self.sample_rate_hz) + "hz_regressor.pkl"
-            )
+            # find model path
+
+            if self.grav_alignment_method == "trim":
+                self.model_path = HERE.joinpath(
+                    "trained_models",
+                    "ml_randomforest",
+                    "2023_12_rf_" + str(self.sample_rate_hz) + "hz_regressor_trimGravityAlignment.pkl",
+                )
+            elif self.grav_alignment_method == "static":
+                self.model_path = HERE.joinpath(
+                    "trained_models",
+                    "ml_randomforest",
+                    "2023_05_rf_" + str(self.sample_rate_hz) + "hz_regressor_staticGravityAlignment.pkl",
+                )
+            else:
+                raise ValueError(
+                    f"grav_alignment_method must be in ['trim', 'static']. Is: {self.grav_alignment_method}"
+                )
 
         if not self.model_path.is_file():
             potential_models = [
@@ -91,7 +109,7 @@ class SpatialParamsRandomForest(SpatialParamsBase):
 
 
 class SpatialParamsRandomForestDemographics(SpatialParamsRandomForest):
-    """Spatial Parameter Estimation Class using a pretrained Random Forest inclusing demographic features."""
+    """Spatial Parameter Estimation Class using a pretrained Random Forest including demographic features."""
 
     age: int  # years
     gender: str  # in ['m', 'f', 'w']
@@ -128,10 +146,28 @@ class SpatialParamsRandomForestDemographics(SpatialParamsRandomForest):
     def _load_model(self):
         if not self.model_path:
             # find model path
+
+            if self.grav_alignment_method == "trim":
+                self.model_path = HERE.joinpath(
+                    "trained_models",
+                    "ml_randomforest",
+                    "2023_12_rf_" + str(self.sample_rate_hz) + "hz_regressor_withDemo_trimGravityAlignment.pkl",
+                )
+            elif self.grav_alignment_method == "static":
+                self.model_path = HERE.joinpath(
+                    "trained_models",
+                    "ml_randomforest",
+                    "2023_05_rf_" + str(self.sample_rate_hz) + "hz_regressor_withDemo_staticGravityAlignment.pkl",
+                )
+            else:
+                raise ValueError(
+                    f"grav_alignment_method must be in ['trim', 'static']. Is: {self.grav_alignment_method}"
+                )
+
             self.model_path = HERE.joinpath(
                 "trained_models",
                 "ml_randomforest",
-                "2023_05_16_rf_" + str(self.sample_rate_hz) + "hz_regressor_withDemo.pkl",
+                "2023_05_rf_" + str(self.sample_rate_hz) + "hz_regressor_withDemo.pkl",
             )
         if not self.model_path.is_file():
             potential_models = [

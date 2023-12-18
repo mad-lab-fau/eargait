@@ -168,7 +168,7 @@ class TrimMeanGravityAlignment(BaseGravityAlignment):
     ):
         self.sampling_rate_hz = sampling_rate_hz
         self.trim_mean_prop = trim_mean_prop
-        self.cut_off_freq = cut_off_freq  # todo : reasonable value?
+        self.cut_off_freq = cut_off_freq
         self.order = order
         self.gravity = gravity
         self.nyq = 0.5 * self.sampling_rate_hz
