@@ -1,72 +1,24 @@
 """A set of functions to rotate and transform ear-worn sensor data."""
+import warnings
 from typing import Dict, Union
 
 import numpy as np
+import pandas as pd
 from nilspodlib import SyncedSession
 from signialib import Session
 
-from eargait.utils.consts import SF_ACC, SF_COLS
+from eargait.utils.consts import BF_ACC, MAX_VALUES_GRAV_ALIGNED_BF_ACC, MIN_VALUES_GRAV_ALIGNED_BF_ACC, SF_ACC, SF_COLS
+from eargait.utils.gravity_alignment import StaticWindowGravityAlignment, TrimMeanGravityAlignment
 from eargait.utils.helper_gaitmap import (
     MultiSensorData,
     SensorData,
-    align_dataset_to_gravity,
     convert_to_fbf,
+    get_multi_sensor_names,
     is_multi_sensor_data,
+    is_sensor_data,
     rotate_dataset,
     rotation_from_angle,
 )
-
-
-def convert_ear_to_ebf(session: Union[Session, SyncedSession]) -> MultiSensorData:
-    """Convert sensor data from ear worn sensors into the ear body frame (ebf).
-
-    Parameters
-    ----------
-    session :
-            Recorsing session either of type SigniaSession or Nilspod SyncSession.
-
-    Return
-    ------
-    MutliSensorData
-            Contains gyroscope and acceleration data in the ear body frame
-
-    Notes
-    -----
-    This funktion can only be used if session data is in hearing aid frame. A different rotation is chosen if
-    firmware version is D12. See user guide, coordinate systems for more information.
-
-    """
-    dataset_sf = convert_ear_to_esf(session)
-    return convert_esf_to_ebf(dataset_sf)
-
-
-def align_gravity_and_convert_ear_to_ebf(session: Union[Session, SyncedSession]) -> SensorData:
-    """Convert sensor data from hearing aid frame into the ear body frame (ebf).
-
-    Parameters
-    ----------
-    session :
-            Recording session either of type SigniaSession or Nilspod SyncSession.
-
-    Return
-    ------
-    MutliSensorData
-            Contains gyroscope and acceleration data in the ear body frame
-
-    Notes
-    -----
-    This funktion can only be used if session data is in hearing aid frame. A different rotation is chosen if
-    firmware version is D12. See user guide, coordinate systems for more information.
-
-    """
-    dataset_sf = convert_ear_to_esf(session)
-    aligned = {}
-    if len(dataset_sf) == 1:
-        sensor_pos = list(dataset_sf.keys())[0]
-        aligned[sensor_pos] = align_dataset_to_gravity(dataset_sf[sensor_pos], session.info.sampling_rate_hz[0])
-    else:
-        aligned = align_dataset_to_gravity(dataset_sf, session.info.sampling_rate_hz[0])
-    return convert_esf_to_ebf(aligned)
 
 
 def convert_ear_to_esf(session: Union[Session, SyncedSession]) -> SensorData:
@@ -125,19 +77,138 @@ def convert_esf_to_ebf(datasets: SensorData) -> SensorData:
     return convert_to_fbf(datasets, left=["left_sensor"], right=["right_sensor"])
 
 
+def convert_ear_to_ebf(session: Union[Session, SyncedSession]) -> MultiSensorData:
+    """Convert sensor data from ear worn sensors into the ear body frame (ebf).
+
+    Parameters
+    ----------
+    session :
+            Recorsing session either of type SigniaSession or Nilspod SyncSession.
+
+    Return
+    ------
+    MutliSensorData
+            Contains gyroscope and acceleration data in the ear body frame
+
+    Notes
+    -----
+    This funktion can only be used if session data is in hearing aid frame. A different rotation is chosen if
+    firmware version is D12. See user guide, coordinate systems for more information.
+
+    """
+    dataset_sf = convert_ear_to_esf(session)
+    return convert_esf_to_ebf(dataset_sf)
+
+
+def align_dataset_to_gravity(
+    dataset: SensorData,
+    gravity_alignment_method: Union[TrimMeanGravityAlignment, StaticWindowGravityAlignment],
+) -> SensorData:
+    """Align dataset, so that each sensor z-axis (if multiple present in dataset) will be parallel to gravity.
+
+    # ToDo : add more details
+
+    Parameters
+    ----------
+    dataset : gaitmap.utils.dataset_helper.Sensordata
+        dataframe representing a single or multiple sensors.
+        In case of multiple sensors a df with MultiIndex columns is expected where the first level is the sensor name
+        and the second level the axis names (all sensor frame axis must be present)
+
+    gravity_alignment_method :
+        Method to align the dataset to gravity. This can be either TrimMeanGravityAlignment or
+        StaticWindowGravityAlignment
+
+    Returns
+    -------
+    aligned dataset
+        This will always be a copy. The original dataframe will not be modified.
+
+    Examples
+    --------
+    >>> # pd.DataFrame containing one or multiple sensor data streams, each of containing all 3 (or 6) IMU
+    ... # axis (acc_x, ..., gyr_z)
+    >>> dataset_df = ...
+    >>> gravity_alignment_method = TrimMeanGravityAlignment(trim_mean_prop=0.2)
+    >>> align_dataset_to_gravity(dataset_df, gravity_alignment_method)
+    <copy of dataset with all axis aligned to gravity>
+
+    """
+    gravity_alignment_method.align_to_gravity(dataset)
+    dataset_aligned = gravity_alignment_method.dataset_aligned_
+    return dataset_aligned
+
+
+def align_gravity_and_convert_ear_to_ebf(
+    session: Union[Session, SyncedSession],
+    gravity_alignment_method: Union[TrimMeanGravityAlignment, StaticWindowGravityAlignment] = None,
+) -> SensorData:
+    """Convert sensor data from hearing aid frame into the ear body frame (ebf).
+
+    Parameters
+    ----------
+    session :
+            Recording session either of type SigniaSession or Nilspod SyncSession.
+
+    gravity_alignment_method
+            Method to align the dataset to gravity. This can be either TrimMeanGravityAlignment or
+            StaticWindowGravityAlignment.
+    Return
+    ------
+    SensorData
+            Contains acceleration (and gyroscope) data in the ear body frame
+
+    Notes
+    -----
+    This function can only be used if session data is in hearing aid frame. A different rotation is chosen if
+    firmware version is D12. See user guide, coordinate systems for more information.
+
+    """
+    dataset_sf = convert_ear_to_esf(session)
+
+    if not gravity_alignment_method:
+        warnings.warn("No gravity alignment method provided. Using MeanTrimGravityAlignment.")
+        gravity_alignment_method = TrimMeanGravityAlignment(session.info.sampling_rate_hz[0])
+
+    dataset_aligned = align_dataset_to_gravity(dataset_sf, gravity_alignment_method)
+    data_ebf = convert_esf_to_ebf(dataset_aligned)
+    _sanity_check_gravity_aligned_data_ebf(data_ebf)
+    return data_ebf
+
+
+def _sanity_check_gravity_aligned_data_ebf(dataset: SensorData):
+    dataset_type = is_sensor_data(dataset, check_gyr=False)
+    if dataset_type == "single":
+        _sanity_check_gravity_aligned_data_ebf_single(dataset)
+    else:
+        for name in get_multi_sensor_names(dataset):
+            _sanity_check_gravity_aligned_data_ebf_single(dataset[name])
+
+
+def _sanity_check_gravity_aligned_data_ebf_single(dataset):
+    mean_acc = dataset[BF_ACC].mean()
+    if (mean_acc < pd.Series(MIN_VALUES_GRAV_ALIGNED_BF_ACC)).sum() != 0:
+        warnings.warn(
+            f"Mean of gravity aligned dataset is {mean_acc} and thus smaller than expected minimum value of "
+            f"{MIN_VALUES_GRAV_ALIGNED_BF_ACC}. This might indicate an error in the gravity alignment."
+        )
+    if (mean_acc > pd.Series(MAX_VALUES_GRAV_ALIGNED_BF_ACC)).sum() != 0:
+        warnings.warn(
+            f"Mean of gravity aligned dataset is {mean_acc} and thus larger than expected maximum value of "
+            f"{MAX_VALUES_GRAV_ALIGNED_BF_ACC}. This might indicate an error in the gravity alignment."
+        )
+
+
 def _get_rotation(session: Union[SyncedSession, Session, str]) -> Dict:
     if isinstance(session, Session) or session == "signia":
 
         if "D12" in session.info.version_firmware[0]:
             if "BMA400" == session.info.imu_sensor_type[0]:
                 rot_matrices = _get_rot_matrix_d12_bma400()
-                print("BMA 400 and D12")
             else:
                 rot_matrices = _get_rot_matrix_d12()
-                print("D12")
         else:
             rot_matrices = _get_rot_matrix_default()
-            print("D11, default")
 
         rot = {}
         for side in session.info.sensor_position:

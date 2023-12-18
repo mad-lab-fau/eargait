@@ -19,7 +19,7 @@ Ear Sensor Frame (ESF)
     * defines axes' directions as up (Z), to the tip of the shoe (X), and
       to the **left** (Y)
 
-Foot Body Frame (FBF)
+Ear Body Frame (EBF)
     * consists of the 3 axes *ML* (medial to lateral), *PA* (posterior to anterior), and *SI* (superior to inferior)
     * is **not** right handed and should not be used for any physical calculations
     * produces the same sensor signal independent of the ear (right/left) for the same anatomical movement (e.g.
