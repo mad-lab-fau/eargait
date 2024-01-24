@@ -10,7 +10,6 @@ from eargait.spatial_params.spatial_params_cnn import SpatialParamsCNN
 from eargait.spatial_params.spatial_params_rf import SpatialParamsRandomForest, SpatialParamsRandomForestDemographics
 from eargait.utils.helpers import load_pickle, save_pickle
 
-
 HERE = Path(__file__).parent
 TEST_DATA = HERE.joinpath("test_data", "short_example_data_acc_50hz.csv")
 
