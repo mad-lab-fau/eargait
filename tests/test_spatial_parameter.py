@@ -1,3 +1,4 @@
+import warnings
 from pathlib import Path
 from unittest import TestCase
 
@@ -8,6 +9,7 @@ from eargait.event_detection import DiaoAdaptedEventDetection
 from eargait.spatial_params.spatial_params_cnn import SpatialParamsCNN
 from eargait.spatial_params.spatial_params_rf import SpatialParamsRandomForest, SpatialParamsRandomForestDemographics
 from eargait.utils.helpers import load_pickle, save_pickle
+
 
 HERE = Path(__file__).parent
 TEST_DATA = HERE.joinpath("test_data", "short_example_data_acc_50hz.csv")
@@ -46,6 +48,7 @@ class TestImport(TestCase):
         )
         ear_gait.detect(data)
         gait_params = ear_gait.get_gait_parameters()
+
         ref_gait_params = load_pickle(HERE.joinpath("test_data/spatial_rf_50Hz_static.pkl"))
         assert gait_params.equals(ref_gait_params)
 

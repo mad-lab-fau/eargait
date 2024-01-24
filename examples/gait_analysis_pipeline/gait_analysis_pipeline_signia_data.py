@@ -134,6 +134,7 @@ gait_params
 temporal_params = ear_gait.temporal_params
 temporal_params
 
+
 # %%
 # Get average temporal gait parameters
 # ------------------------------------

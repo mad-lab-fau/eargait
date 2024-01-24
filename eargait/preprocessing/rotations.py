@@ -202,7 +202,7 @@ def _sanity_check_gravity_aligned_data_ebf_single(dataset):
 def _get_rotation(session: Union[SyncedSession, Session, str]) -> Dict:
     if isinstance(session, Session) or session == "signia":
 
-        if "D12" in session.info.version_firmware[0]:
+        if "D12" in session.info.firmware_version[0]:
             if "BMA400" == session.info.imu_sensor_type[0]:
                 rot_matrices = _get_rot_matrix_d12_bma400()
             else:
