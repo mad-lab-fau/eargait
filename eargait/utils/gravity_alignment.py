@@ -94,12 +94,14 @@ class StaticWindowGravityAlignment(BaseGravityAlignment):
         static_signal_th: float = 2.5,
         metric: METRIC_FUNCTION_NAMES = "median",
         gravity: np.ndarray = GRAV_VEC,
+        force_usage_acc=False,
     ):
         self.sampling_rate_hz = sampling_rate_hz
         self.window_length_s = window_length_s
         self.static_signal_th = static_signal_th
         self.metric = metric
         self.gravity = gravity
+        self.force_usage_acc = force_usage_acc
         super().__init__()
 
     def align_to_gravity(self, dataset: SensorData):
@@ -113,7 +115,7 @@ class StaticWindowGravityAlignment(BaseGravityAlignment):
         window_length = int(round(self.window_length_s * self.sampling_rate_hz))
         if dataset_type == "single":
             # get static acc vector
-            acc_vector = self._get_static_acc_vector(dataset, window_length, self.static_signal_th, self.metric)
+            acc_vector = self._get_static_acc_vector(dataset, window_length)
             if acc_vector is None:
                 raise ValueError(
                     "No static window was found. Please use the class TrimMeanGravityAlignment or an alternative "
@@ -122,24 +124,30 @@ class StaticWindowGravityAlignment(BaseGravityAlignment):
         else:
             # build dict with static acc vectors for each sensor in dataset
             acc_vector = {
-                name: self._get_static_acc_vector(dataset[name], window_length, self.static_signal_th, self.metric)
+                name: self._get_static_acc_vector(dataset[name], window_length)
                 for name in get_multi_sensor_names(dataset)
             }
         return acc_vector
 
-    @staticmethod
-    def _get_static_acc_vector(data: pd.DataFrame, window_length, static_signal_th, metric) -> np.ndarray:
+    def _get_static_acc_vector(self, data: pd.DataFrame, window_length) -> np.ndarray:
         """Extract the mean accelerometer vector describing the static position of the sensor."""
         # find static windows within the gyro data
-        if SF_GYR[0] in data.columns:
-            cols = SF_GYR
-        else:
+        if self.force_usage_acc or SF_GYR[0] not in data.columns:
             cols = SF_ACC
-            print("No gyroscope data is available, acceleration signal is used for gravity alignment.")
+            print("Acceleration signal is used for gravity alignment.")
+        else:
+            cols = SF_GYR
+            print("Gyroscope signal is used for gravity alignment.")
 
-        static_bool_array = find_static_samples(data[cols].to_numpy(), window_length, static_signal_th, metric)
+        static_bool_array = find_static_samples(
+            data[cols].to_numpy(), window_length, self.static_signal_th, self.metric
+        )
 
         # raise error if no static windows could be found with given user settings
+        if not any(static_bool_array):
+            static_bool_array = find_static_samples(
+                data[cols].to_numpy(), int(window_length / 2), self.static_signal_th, self.metric
+            )
         if not any(static_bool_array):
             raise ValueError(
                 "No static window was found. Please use the class TrimMeanGravityAlignment, an alternative gravity "

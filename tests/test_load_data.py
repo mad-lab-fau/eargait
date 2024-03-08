@@ -53,6 +53,14 @@ class TestImport(TestCase):
         for key, val in dataset_aligned.items():
             pd.testing.assert_frame_equal(val, reference_data_ebf[key])
 
+    def test_static_gravity_alignment_forced_acc(self):
+        session = load(HERE.joinpath("test_data/subject01"))
+        dataset_sf = convert_ear_to_esf(session)
+        gravity_alignment_method = StaticWindowGravityAlignment(
+            sampling_rate_hz=session.info.sampling_rate_hz[0], static_signal_th=10, force_usage_acc=True
+        )
+        dataset_aligned = align_dataset_to_gravity(dataset_sf, gravity_alignment_method)
+
     def test_trim_gravity_alignment(self):
         with open(HERE.joinpath("test_data/align_to_gravity_trim_method.pickle"), "rb") as handle:
             reference_data_ebf = pickle.load(handle)

@@ -119,6 +119,7 @@ ear_gait = EarGait(
 #
 ear_gait.detect(ear_data_short)
 gait_events = ear_gait.event_list
+gait_events
 
 # %%
 # Get all gait parameters
