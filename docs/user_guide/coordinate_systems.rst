@@ -4,7 +4,11 @@
 
 Coordinate  Systems
 ===================
-Defining coordinate system is a crucial aspect when working with IMU data. The coordinate system definition of an internal gaitmap library [1]_. 
+Defining coordinate system is a crucial aspect when working with IMU data and get even more complicated when these IMUs are attached to a human body. The coordinate system definition of the gaitmap library [1]_, a python library for gait and movement analysis using foot-worn sensors.
+
+Similar to gaitmap [1]_, this library makes a couple of deliberate choices when it comes to the definition of coordinate systems and related naming conventions. Therefore, please read this document carefully before using the pipelines available in EarGait.
+
+For more information about the gaitmap library [1]_ and its coordinate system definitions, please refer to the gaitmap documentation.
 
 
 Hearing Aid Frame (HAF)
@@ -100,7 +104,7 @@ The function :func:`~eargait.utils.preprocessing.rotations.align_gravity_and_con
 Reference
 ---------
 
-.. [1] Küderle A., et al. Gaitmap. To be published soon. 
+.. [1] Küderle A., et al. Gaitmap. https://github.com/mad-lab-fau/gaitmap
 .. [2] Wu, G., Siegler, S., Allard, P., Kirtley, C., Leardini, A., Rosenbaum, D., … Stokes, I. (2002). ISB
        recommendation on definitions of joint coordinate system of various joints for the reporting of human joint
        motion - Part I: Ankle, hip, and spine. Journal of Biomechanics.
