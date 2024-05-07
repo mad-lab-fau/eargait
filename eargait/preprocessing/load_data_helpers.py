@@ -1,4 +1,4 @@
-"""A set of functions to load a recording of IMU sensors integrated into signia hearing aids."""
+"""Helper functions for loading data from Signia Hearing Aids."""
 
 import warnings
 from pathlib import Path

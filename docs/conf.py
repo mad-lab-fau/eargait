@@ -176,6 +176,7 @@ sphinx_gallery_conf = {
             "../examples/gait_analysis_pipeline",
             "../examples/temporal_parameter_estimation",
             "../examples/spatial_parameter_estimation",
+            "../examples/coordinate_system_transformation",
         ]
     ),
     "within_subsection_order": FileNameSortKey,

@@ -83,7 +83,7 @@ class SpatialParamsRandomForest(SpatialParamsBase):
                 self.model_path = HERE.joinpath(
                     "trained_models",
                     "ml_randomforest",
-                    "2023_05_rf_" + str(self.sample_rate_hz) + "hz_regressor_staticGravityAlignment.pkl",
+                    "2024_05_rf_" + str(self.sample_rate_hz) + "hz_regressor_staticGravityAlignment.pkl",
                 )
             else:
                 raise ValueError(

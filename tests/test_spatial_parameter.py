@@ -14,7 +14,9 @@ HERE = Path(__file__).parent
 TEST_DATA = HERE.joinpath("test_data", "short_example_data_acc_50hz.csv")
 
 
-class TestImport(TestCase):
+class TestSpatialParameters:
+    """Test class for spatial parameters."""
+
     # def test_spatial_method_cnn(self):
     #    data = pd.read_csv(TEST_DATA, index_col=0)
     #    sample_rate = 50
@@ -33,7 +35,7 @@ class TestImport(TestCase):
     #     ref_gait_params = load_pickle(HERE.joinpath("test_data/spatial_cnn_50Hz.pkl"))
     #     assert gait_params.equals(ref_gait_params)
 
-    def test_spatial_method_randomforest_static(self):
+    def test_spatial_method_randomforest_static(self, snapshot) -> None:
         data = pd.read_csv(TEST_DATA, index_col=0)
         sample_rate = 50
         diao = DiaoAdaptedEventDetection(sample_rate)
@@ -46,10 +48,8 @@ class TestImport(TestCase):
             bool_use_event_list_consistent=True,
         )
         ear_gait.detect(data)
-        gait_params = ear_gait.get_gait_parameters()
-
-        ref_gait_params = load_pickle(HERE.joinpath("test_data/spatial_rf_50Hz_static.pkl"))
-        assert gait_params.equals(ref_gait_params)
+        gait_params = ear_gait.get_gait_parameters().to_frame(name="value")
+        snapshot.assert_match(gait_params, "gait_params", check_dtype=False)
 
     def test_spatial_method_randomforest_loading(self):
         for rate in [50, 200]:

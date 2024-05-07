@@ -135,6 +135,21 @@ acc_df = left_dataset.acc.data_as_df()
 gyro = left_dataset.gyro
 gyro_df = left_dataset.gyro.data_as_df()
 
+
+# %%
+# Gravity Alignment and Conversion to medical coordinate system (only for singia hearing aids!!)
+# ----------------------------------------------------------------------------------------------
+#
+# This method can be used to align the data to gravity. The method is only available for Signia hearing aids, because orientation of IMU within world frame is known.
+# For further information on the different coordinate systems please refer to the documentation
+# :ref:`Coordinate Systems <coordinate_systems>`
+from eargait.preprocessing import align_gravity_and_convert_ear_to_ebf
+from eargait.utils import StaticWindowGravityAlignment, TrimMeanGravityAlignment
+
+gravity_method = StaticWindowGravityAlignment(resampled_session.info.sampling_rate_hz[0])
+ear_data = align_gravity_and_convert_ear_to_ebf(session, gravity_method)
+
+
 # %%
 # Data visualization
 # ------------------
