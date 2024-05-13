@@ -1,4 +1,4 @@
-.. _examples-gait-analysis:
+git bran.. _examples-gait-analysis:
 
 Gait Analysis Pipeline
 ======================
