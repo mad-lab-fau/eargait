@@ -22,16 +22,3 @@ except ImportError:
 def reset_random_seed() -> None:
     np.random.seed(10)
     random.seed(10)
-
-
-@pytest.fixture()
-def snapshot(request):
-    with PyTestSnapshotTest(request) as snapshot_test:
-        yield snapshot_test
-
-
-def pytest_addoption(parser) -> None:
-    group = parser.getgroup("snapshottest")
-    group.addoption(
-        "--snapshot-update", action="store_true", default=False, dest="snapshot_update", help="Update the snapshots."
-    )

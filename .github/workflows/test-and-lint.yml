@@ -31,7 +31,7 @@ jobs:
         poetry run poe check
     - name: Testing
       run: |
-        poetry run poe test
+        poetry run poe test_ci
     - name: "Upload coverage to Codecov"
       uses: codecov/codecov-action@v2
       with:
