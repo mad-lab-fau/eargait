@@ -9,8 +9,6 @@ from pandas._testing import assert_frame_equal, assert_series_equal
 from scipy.spatial.transform import Rotation
 from tpcp import BaseTpcpObject
 
-from tests._regression_utils import PyTestSnapshotTest
-
 try:
     from pomegranate import GeneralMixtureModel, State
 except ImportError:
