@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "eargait"
-version = "2.9.0"
+version = "2.10.0"
 description = "*Eargait* provides a set of algorithms and functions to process IMU data recorded with ear-worn IMU sensors and to estimate characteristic gait parameters. "
 authors = ["Ann-Kristin Seifer <ann-kristin.seifer@fau.de>",
             "Arne Küderle <arne.kuederle@fau.de>"]
@@ -27,7 +27,11 @@ numba =  [
 ]
 numpy = ">=1.20, <2.0.0"
 debugpy = "1.6.4"
-#tensorflow-io-gcs-filesystem = "0.34.0"
+tensorflow-io-gcs-filesystem = [
+    {version= "0.30.0", platform = 'win32'},
+    {version= "^0.34.0", platform = 'darwin'},
+    {version= "^0.34.0", platform = 'linux'}
+]
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.1"
