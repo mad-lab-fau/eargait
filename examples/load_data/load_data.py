@@ -100,9 +100,9 @@ aligned_session = session.align_calib_resample(skip_calibration=True)
 
 # %%
 # Note:
-# The calibration can be skipped using the `skip_calibration` parameter. However, a calibration for IMU sensors to align
-# sensor axes to the individual sensor case is recommended using the calibration method proposed by Ferraris et al. [1].
-# The `imucal` package [2] provides a code and a detailed description of the calibration.
+# The calibration_files can be skipped using the `skip_calibration` parameter. However, a calibration_files for IMU sensors to align
+# sensor axes to the individual sensor case is recommended using the calibration_files method proposed by Ferraris et al. [1].
+# The `imucal` package [2] provides a code and a detailed description of the calibration_files.
 #
 # [1] [Ferraris et al., Calibration of three-axial rate gyros without angular velocity standards, Sensors and Actuators A: Physical, 1994]
 #

@@ -15,7 +15,7 @@ HERE = Path(__file__).parent.parent.parent
 
 def get_mat_example_data_path() -> Path:
     # data directory
-    data_dir = HERE.joinpath("example_data/mat_files/normal")
+    data_dir = HERE.joinpath("example_data/mat_files/fast")
     return data_dir
 
 

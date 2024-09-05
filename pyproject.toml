@@ -32,6 +32,10 @@ tensorflow-io-gcs-filesystem = [
     {version= "^0.34.0", platform = 'darwin'},
     {version= "^0.34.0", platform = 'linux'}
 ]
+torch = "2.0.1"
+imbalanced-learn = "0.8.1"
+pytorch-lightning = "1.5.3"
+intervaltree = "3.1.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.1"
