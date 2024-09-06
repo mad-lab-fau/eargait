@@ -11,17 +11,10 @@ import yaml
 from tpcp import Algorithm
 
 from eargait.utils.helper_gaitmap import SensorData, is_sensor_data
-# from HARTrainEval.config.config import Config
 from eargait.gait_sequence_detection.temp_config_oder_so.configuration import Config
-# from HARTrainEval.config.consts import LABELS
-# from eargait.gait_sequence_detection.temp_config_oder_so.constants import LABELS
-from eargait.utils.consts import LABELS  # hier meine labels eingefügt sollte auch gehen oder?
-# from HARTrainEval.helper_utils.helper_eval.helper import get_standardized_data, prepare_dl_model_data
+from eargait.utils.consts import LABELS
 from eargait.gait_sequence_detection.temp_utils_.standardize import get_standardized_data
-from eargait.gait_sequence_detection.temp_utils_.data_preparation_standardization import prepare_dl_model_data
-# from HARTrainEval.models.models_eval.har_predictor import HARPredictor
 from eargait.gait_sequence_detection.temp_model_related_Folder.har_predictor import HARPredictor
-# TODO hardcoded path anpassen / Lösungen finden relative paths oder so idk !!!
 
 Self = TypeVar("Self", bound="GaitSequenceDetection")
 pd.set_option("display.max_rows", None)
@@ -29,11 +22,10 @@ repo_root = Path(__file__).resolve().parent.parent.parent
 
 # For all Config Setting: HARTrainEval.config.config
 run_config = Config(
-    har_data_path=str(repo_root),  # set to local path, if load_config is called -> tries to run on cluster
+    har_data_path=str(repo_root),
     use_gravity_alignment=True,
     selected_coords=["x", "y", "z"],
     body_frame_coords=True,
-    imbalance_method=None,  # automatically set if needed for prepare_dl_model_data function
     model="conv_gru",  # Choose the model
 )
 
@@ -52,7 +44,7 @@ class GaitSequenceDetection(Algorithm):
         Determines the size of the gap (in number of windows) at which two consecutive sequences are linked
         together to a single sequence.
     minimum_seq_length
-        Determines the minimim length of a sequence (in windows). Needs to be >= 1.
+        Determines the minimum length of a sequence (in windows). Needs to be >= 1.
 
 
     Attributes
@@ -108,9 +100,6 @@ class GaitSequenceDetection(Algorithm):
         self.activity_df = pd.DataFrame()
         self.data = pd.DataFrame()
         self.activity = ""
-        self.tensor_windows = torch.Tensor()
-        self.predictions_df = pd.DataFrame()
-        self.sequence = pd.DataFrame()
         super().__init__()
 
     def detect(self, data: SensorData, activity: Union[str, List[str]] = "walking") -> Self:
@@ -181,9 +170,6 @@ class GaitSequenceDetection(Algorithm):
             for idx, sensor in enumerate(self.data):
                 self._plot_single(self.data[sensor], self.sequence_list_[sensor], axes[idx], csv_activity_table)
 
-        # plot_title = self.data_path[-25:]  # Adjust this according to your data_path variable
-        # plt.gcf().canvas.set_window_title(plot_title)
-
         plt.show()
 
     def _detect_single(self, data):
@@ -238,12 +224,8 @@ class GaitSequenceDetection(Algorithm):
         if self.criteria_order == "strictness_first":
             if self.strictness != 0:
                 sequence = self._ensure_strictness(sequence)
-                # print(f"activity sequences after ensure Strictness")
-                print(sequence)
             if self.minimum_seq_length != 1:
                 sequence = self._ensure_minimum_length(sequence)
-                # print(f"activity sequences after ensure Min Length")
-                # print(sequence)
         elif self.criteria_order == "min_length_first":
             if self.minimum_seq_length != 1:
                 sequence = self._ensure_minimum_length(sequence)
@@ -254,32 +236,19 @@ class GaitSequenceDetection(Algorithm):
 
     def _ensure_strictness(self, seq: pd.DataFrame):
         assert (np.arange(len(seq)) != seq.index).sum() == 0
-        bool_array = (
-            seq.start[1::].to_numpy() - seq.end[:-1].to_numpy() <= self._window_length_samples * self.strictness
-        )
-        trues = seq.index[np.where(bool_array)[0]]
-
-        for el in trues:
-            seq.loc[el]["start"] = seq.loc[el].start
-            seq.loc[el]["end"] = seq.loc[el + 1].end
-        seq = seq.drop(index=trues + 1)
-        return seq.reset_index(drop=True)
-
-    def _ensure_strictness2(self, seq: pd.DataFrame):
-        assert (np.arange(len(seq)) != seq.index).sum() == 0
         drop_indices = []
         # Start with the first sequence
         current_index = 0
-        # Iterate over each sequence in the DataFrame
+
         for i in range(1, len(seq)):
-            # If the gap between the current sequence and the next is within the strictness limit
+
             if (seq.loc[i, "start"] - seq.loc[current_index, "end"]) <= self._window_length_samples * self.strictness:
-                # Extend the current sequence to the end of the next sequence
+
                 seq.loc[current_index, "end"] = seq.loc[i, "end"]
-                # Mark the next sequence for removal
+
                 drop_indices.append(i)
             else:
-                # Move to the next sequence that doesn't get merged
+
                 current_index = i
 
         seq = seq.drop(index=drop_indices)
@@ -320,9 +289,9 @@ class GaitSequenceDetection(Algorithm):
         if Path(scaler_path).exists():
             scalars = joblib.load(scaler_path)
         else:
-            data_prepared = prepare_dl_model_data(run_config)
-            scalars = data_prepared["scaler"]
-            print("Using reconstructed scaler")
+            raise FileNotFoundError(
+                f"Scaler not found at {scaler_path}. Please ensure the pre-trained scaler is available."
+            )
 
         standardized_data = get_standardized_data(scalars, data_array)
         tensor_standardized_data = torch.from_numpy(standardized_data)
@@ -331,16 +300,18 @@ class GaitSequenceDetection(Algorithm):
     def _load_trained_model(self):
         # Load hyperparams of the trained model
         yaml_path = self.model_path.joinpath("hparams.yaml")
-        # print(yaml_path)
         with open(yaml_path, "rb") as stream:
             try:
                 hyperparams = yaml.safe_load(stream)
-                # print(hyperparams)
-            except yaml.YAMLError as exc:
-                print(exc)
+            except (yaml.YAMLError, FileNotFoundError):
+                raise FileNotFoundError(f"Could not find or load the hyperparameters file at {yaml_path}.")
+
         input_channels = hyperparams["input_channels"]
         checkpoint_path = list(self.model_path.joinpath("checkpoints").glob("*.ckpt"))
-        assert len(checkpoint_path) == 1
+        if len(checkpoint_path) != 1:
+            raise FileNotFoundError(
+                f"Expected one checkpoint, but found {len(checkpoint_path)} at {self.model_path}/checkpoints.")
+
         # Get the trained model
         trained_model = HARPredictor.load_from_checkpoint(
             checkpoint_path[0],

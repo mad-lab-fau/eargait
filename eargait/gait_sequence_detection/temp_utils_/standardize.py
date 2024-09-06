@@ -3,18 +3,6 @@ import numpy as np
 from sklearn.preprocessing import StandardScaler
 
 
-def get_standardized_scalars(data: np.ndarray) -> object:
-    """Create fitted StandardScalars for each coordinate channel.
-
-    :param data: sensor data to fit a scalar
-    :return: fitted standard scalar
-    """
-    train_data = np.concatenate(data, axis=0)
-    scalars = StandardScaler()
-    trained_scalar = scalars.fit(train_data)
-    return trained_scalar
-
-
 def get_standardized_data(scalars: StandardScaler, data: np.ndarray) -> np.ndarray:
     """Standardizes sensor data.
 

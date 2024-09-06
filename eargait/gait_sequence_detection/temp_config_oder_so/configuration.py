@@ -27,7 +27,6 @@ class Config:
         window_length_in_ms: int = 3000,
         step_size_in_ms: int = 1500,
         body_frame_coords: bool = False,
-        imbalance_method: str = None,
         model: str = "conv_gru",
     ):
         self.data_base_path = har_data_path
@@ -39,7 +38,6 @@ class Config:
         self.step_size = int((step_size_in_ms / 1000) * 200)
         self.frequency_step = int(200 / hz)
         self.body_frame_coords = body_frame_coords
-        self.imbalance_method = imbalance_method
         self.model = model
         self.window_length_in_samples = math.ceil(self.window_length / self.frequency_step)
         self.use_gravity_alignment = use_gravity_alignment

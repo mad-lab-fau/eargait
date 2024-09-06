@@ -21,7 +21,7 @@ from eargait.utils.example_data import get_mat_example_data_path
 # Path to data file (.mat) or .mat data directory
 # Session should also work with txt file? so also gait detection?
 repo_root = Path(__file__).resolve().parent.parent.parent
-print(repo_root)
+print("Repo Root",repo_root)
 
 data_path = get_mat_example_data_path()
 csv_path = repo_root / "example_data/mat_files/walking_bout_indices.csv"
@@ -68,7 +68,7 @@ else:
 # strictness=0 and minimum_sequence_length=1 are seen as standard.
 # strictness is defined as >=0 while minimum_seq_length as >=1 definitions of these parameters in the Gsd class.
 
-gsd = GaitSequenceDetection(sample_rate=50, strictness=0, minimum_seq_length=1)
+gsd = GaitSequenceDetection(sample_rate=50, strictness=0, minimum_seq_length=1,)
 
 # %%
 # Detect Gait Sequences
@@ -87,7 +87,7 @@ gsd.detect(ear_data, activity="walking")
 #
 # Print the timeframes where the specified activity occurs in the data.
 
-print(gsd.sequence_list_)
+print("Timeframes of specified activity", gsd.sequence_list_)
 
 # %%
 # Plot Detected Sequences
@@ -95,9 +95,6 @@ print(gsd.sequence_list_)
 #
 # Visualize the detected sequences by overlaying them on the accelerometer data.
 
-import matplotlib.pyplot as plt
-# plt.gcf().canvas.manager.set_window_title(f"Tempo")
-plt.show(block=True)
 gsd.plot()
 
 
@@ -108,7 +105,7 @@ gsd.plot()
 # The pipeline allows customization of parameters like `strictness` and `minimum_seq_length` to fine-tune the detection
 # process based on the specific requirements of your dataset.
 
-gsd = GaitSequenceDetection(sample_rate=50, strictness=1, minimum_seq_length=2)
+gsd = GaitSequenceDetection(sample_rate=50, strictness=0, minimum_seq_length=1)
 
 # Handling Multiple Activities
 # ----------------------------
@@ -121,32 +118,27 @@ gsd.detect(ear_data, activity=["walking", "jogging", "stairs up", "stairs down"]
 # this is also plottable_
 gsd.plot()
 
-# TODO artificial example um strictness und min length zu zeigen ? z.B. wie in
 
 
+########################################################################################################################
 # AB HIER ALLES WEG FÜR DAS MINIMAL BSP
 # %%
 # Further usefully analysis: Overlay Ground truth sequences and detected sequences
 # --------------------------------------------------------------------------------
 #
 # To compare the detected sequences with eventually present Ground truth data we first need to make sure
-# the Ground truth is present in the same sampling rate.  # TODO was hast du da geschrieben ey :DD
+# the Ground truth is present in the same sampling rate.
 
 
 def downsample_ground_truth(csv_path, target_sample_rate):
     csv_table = pd.read_csv(csv_path)
-    # Sampling factor
     downsampling_factor = 200 / target_sample_rate
-    # Downsample start stop columns
-    print("csv table bfore dwonsampling", csv_table)
     csv_table["start"] = (csv_table["start"] / downsampling_factor).astype(int)
     csv_table["stop"] = (csv_table["stop"] / downsampling_factor).astype(int)
-    print("cs after dwonsampling",csv_table)
     return csv_table
 
 
 tempo = get_mat_example_data_path().stem
-print(tempo)
 csv_activity_table = downsample_ground_truth(csv_path, target_sample_rate=50)
 csv_activity_table = csv_activity_table[csv_activity_table["speed"] == tempo]
 csv_activity_table = csv_activity_table.rename(columns={"stop": "end"})
@@ -181,3 +173,25 @@ ground_truth_sequences = csv_activity_table[["start", "end"]]
 tp_percentage = calculate_tp_percentage(detected_sequences, ground_truth_sequences)
 
 print(f"True Positive Percentage: {tp_percentage:.2f}%")
+########################################################################################################################
+# Strictness and min_length Parameter
+# ----------------------------
+#
+# strictness
+# Determines the size of the gap (in number of windows) at which two consecutive sequences are linked
+# together to a single sequence.
+# minimum_seq_length
+# Determines the minimum length of a sequence (in windows). Needs to be >= 1.
+sequence = pd.DataFrame({
+        'start': [2100, 2550, 3750, 4750, 6000, 7300, 8250, 9300, 10200],
+        'end': [2550, 3600, 4450, 5850, 6900, 7950, 9000, 9450, 10350]
+    })
+print("Original Seqeuence:", sequence)
+sample_rate = 50
+strictness = 2
+minimum_seq_length = 2
+gsd = GaitSequenceDetection(sample_rate=sample_rate, strictness=strictness, minimum_seq_length=minimum_seq_length)
+sequence = gsd._ensure_strictness(sequence)
+print("Seqeunce after Strictness criterion:", sequence)
+sequence = gsd._ensure_minimum_length(sequence)
+print("Sequence after min_length criterion:", sequence)
