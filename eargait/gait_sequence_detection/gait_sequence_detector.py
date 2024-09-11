@@ -11,7 +11,7 @@ import yaml
 from tpcp import Algorithm
 
 from eargait.utils.helper_gaitmap import SensorData, is_sensor_data
-from eargait.gait_sequence_detection.temp_config_oder_so.configuration import Config
+from eargait.gait_sequence_detection.configuration import Config
 from eargait.utils.consts import LABELS
 from eargait.gait_sequence_detection.temp_utils_.standardize import get_standardized_data
 from eargait.gait_sequence_detection.temp_model_related_Folder.har_predictor import HARPredictor
@@ -19,16 +19,6 @@ from eargait.gait_sequence_detection.temp_model_related_Folder.har_predictor imp
 Self = TypeVar("Self", bound="GaitSequenceDetection")
 pd.set_option("display.max_rows", None)
 repo_root = Path(__file__).resolve().parent.parent.parent
-
-# For all Config Setting: HARTrainEval.config.config
-run_config = Config(
-    har_data_path=str(repo_root),
-    use_gravity_alignment=True,
-    selected_coords=["x", "y", "z"],
-    body_frame_coords=True,
-    model="conv_gru",  # Choose the model
-)
-
 
 class GaitSequenceDetection(Algorithm):
     """Find gait events in the IMU raw signal using a pre-trained DL HAR model.
@@ -281,9 +271,9 @@ class GaitSequenceDetection(Algorithm):
     def _standardize_data(self, tensor):
         data_array = tensor.numpy()
         if self.sample_rate == 50:
-            scaler_path = repo_root / "eargait/gait_sequence_detection/pretrained_models/scaler.save"
+            scaler_path = repo_root / "eargait/gait_sequence_detection/pretrained_models/50hz_gravity_aligned_scaler.save"
         elif self.sample_rate == 200:
-            scaler_path = repo_root / "eargait/gait_sequence_detection/pretrained_models/scaler_BodyF_GravAl.save"
+            scaler_path = repo_root / "eargait/gait_sequence_detection/pretrained_models/200hz_gravity_aligned_scaler.save"
         else:
             raise ValueError("Unsupported sample rate. Please use either 50 or 200.")
         if Path(scaler_path).exists():

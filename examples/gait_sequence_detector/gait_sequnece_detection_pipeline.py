@@ -68,7 +68,7 @@ else:
 # strictness=0 and minimum_sequence_length=1 are seen as standard.
 # strictness is defined as >=0 while minimum_seq_length as >=1 definitions of these parameters in the Gsd class.
 
-gsd = GaitSequenceDetection(sample_rate=50, strictness=0, minimum_seq_length=1,)
+gsd = GaitSequenceDetection(sample_rate=50, strictness=0, minimum_seq_length=1)
 
 # %%
 # Detect Gait Sequences

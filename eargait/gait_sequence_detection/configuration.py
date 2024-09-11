@@ -1,6 +1,7 @@
 """Configuration object for data loading and pruning settings."""
 
 import math
+from pathlib import Path
 
 
 class Config:
@@ -20,18 +21,18 @@ class Config:
 
     def __init__(
         self,
-        har_data_path: str,
-        use_gravity_alignment: bool,
+        har_data_path: str = Path(__file__).resolve().parent.parent.parent,
+        use_gravity_alignment: bool = True,
         hz: int = 50,
         selected_coords: list[str] = None,
         window_length_in_ms: int = 3000,
         step_size_in_ms: int = 1500,
-        body_frame_coords: bool = False,
+        body_frame_coords: bool = True,
         model: str = "conv_gru",
     ):
         self.data_base_path = har_data_path
         self.hz = hz
-        self.selected_coords = selected_coords
+        self.selected_coords = selected_coords if selected_coords is not None else ["x", "y", "z"]
         self.window_length_in_ms = window_length_in_ms
         self.window_length = int((window_length_in_ms / 1000) * 200)
         self.step_size_in_ms = step_size_in_ms
