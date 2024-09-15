@@ -3,9 +3,11 @@ import pickle
 from pathlib import Path
 
 import pandas as pd
+import numpy as np
 from scipy import signal
 
 from eargait.utils.helper_gaitmap import SensorData, is_sensor_data
+from sklearn.preprocessing import StandardScaler
 
 
 def load_pickle(path: Path):
@@ -60,3 +62,18 @@ def _single_sensor_butter_filter(data: pd.DataFrame, a, b) -> pd.DataFrame:
         except ValueError:
             data_filt[col] = signal.filtfilt(b, a, data[col], padlen=len(data) - 5)
     return data_filt
+
+def get_standardized_data(scalars: StandardScaler, data: np.ndarray) -> np.ndarray:
+    """Standardizes sensor data.
+
+    :param scalars: previously fitted scalar
+    :param data: data to be transformed
+    :return: transformed standardized data
+    """
+    for i in range(data.shape[0]):
+        # transform each window based on the scalar
+        standardized_sample = scalars.transform(data[i])
+        data[i] = standardized_sample
+    return data
+
+
