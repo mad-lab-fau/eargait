@@ -65,7 +65,7 @@ class GaitSequenceDetection(Algorithm):
     strictness: int
     minimum_seq_length: int
 
-    model_path: Path()
+    model_path: Path
     labels = LABELS
     _trained_model: None
     _window_length_samples: int
@@ -253,16 +253,19 @@ class GaitSequenceDetection(Algorithm):
         use_default_model = True  # Default is model with gravity alignment & Conversion to Body Frame
         if self.sample_rate == 50:
             if use_default_model:
-                model_path = repo_root / "eargait/gait_sequence_detection/pretrained_models/50hz_grav_align/version_0"
+                model_path = repo_root.joinpath("eargait", "gait_sequence_detection", "pretrained_models",
+                                                "50hz_grav_align", "version_0")
                 self.use_gravity_aligned_model = True
             else:
                 raise ValueError("No 50hz model available without gravity alignment and conversion to Body Frame.")
         elif self.sample_rate == 200:
             if use_default_model:
-                model_path = repo_root / "eargait/gait_sequence_detection/pretrained_models/200hz_grav_align/default87/version_0"
+                model_path = repo_root.joinpath("eargait", "gait_sequence_detection", "pretrained_models",
+                                                "200hz_grav_align", "default87", "version_0")
                 self.use_gravity_aligned_model = True
             else:
-                model_path = repo_root / "eargait/gait_sequence_detection/pretrained_models/200hz_grav_align_off/default/version_0"
+                model_path = repo_root.joinpath("eargait", "gait_sequence_detection", "pretrained_models",
+                                                "200hz_grav_align_off", "default", "version_0")
                 self.use_gravity_aligned_model = False
         else:
             raise ValueError("Unsupported sample rate. Please use either 50, or 200.")
@@ -271,9 +274,12 @@ class GaitSequenceDetection(Algorithm):
     def _standardize_data(self, tensor):
         data_array = tensor.numpy()
         if self.sample_rate == 50:
-            scaler_path = repo_root / "eargait/gait_sequence_detection/pretrained_models/50hz_gravity_aligned_scaler.save"
+            scaler_path = repo_root.joinpath("eargait", "gait_sequence_detection", "pretrained_models",
+                                             "50hz_gravity_aligned_scaler.save")
         elif self.sample_rate == 200:
-            scaler_path = repo_root / "eargait/gait_sequence_detection/pretrained_models/200hz_gravity_aligned_scaler.save"
+            scaler_path = repo_root.joinpath("eargait", "gait_sequence_detection", "pretrained_models",
+                                             "200hz_gravity_aligned_scaler.save")
+
         else:
             raise ValueError("Unsupported sample rate. Please use either 50 or 200.")
         if Path(scaler_path).exists():

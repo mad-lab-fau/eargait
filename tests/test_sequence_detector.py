@@ -1,4 +1,4 @@
-"""Test the Seqeunce detector class."""
+"""Test the Sequence detector class."""
 import pickle
 from pathlib import Path
 
@@ -11,19 +11,21 @@ from eargait.preprocessing import align_gravity_and_convert_ear_to_ebf
 from eargait.utils.helper_gaitmap import ValidationError, is_sensor_data
 from signialib import Session
 
-from eargait.gait_sequence_detection.gait_sequence_detector import GaitSequenceDetection, run_config
+from eargait.gait_sequence_detection.gait_sequence_detector import GaitSequenceDetection
+from eargait.gait_sequence_detection.configuration import Config
 
 MAX_WINDOWS_FOR_SNAPSHOT = 50  # Restricts the Snapshots taken to 50 windows to limit json file size
 
 @pytest.fixture(scope="module")
 def setup_paths():
-    base_path = Path(__file__).resolve().parent.parent.parent
-    print(base_path)
-    data_path_pkl = base_path / "example_data/pkl_files/data_.pkl"
-    data_path_mat = base_path / "example_data/mat_files/normal"
-    #calibration_path = base_path / "example_data/calibration_files/signia"
-    calibration_path = r"/example_data/calibration_files/signia"
-    sample_rate = run_config.hz
+    config = Config()
+    base_path = config.data_base_path
+    sample_rate = config.hz
+    print("This is the base path:", base_path)
+
+    data_path_pkl = config.data_base_path.joinpath("example_data", "pkl_files", "data_.pkl")
+    data_path_mat = config.data_base_path.joinpath("example_data", "mat_files", "normal")
+    calibration_path = config.data_base_path.joinpath("example_data", "calibration_files", "signia")
 
     return data_path_pkl, data_path_mat, calibration_path, sample_rate
 
@@ -51,8 +53,7 @@ def load_data(setup_paths):
 
     session = Session.from_folder_path(data_path_mat)
     print(session.info)
-    # TODO Calibration files nicht vorhanden...
-    align_calibrate_sess = session.align_calib_resample(calibration_path, resample_rate_hz=50)
+    align_calibrate_sess = session.align_calib_resample(str(calibration_path), resample_rate_hz=50, skip_calibration= True)
     data_mat = align_gravity_and_convert_ear_to_ebf(align_calibrate_sess)
 
     print("Structure of data_mat:")
@@ -312,9 +313,6 @@ def test_ensure_strictness(load_data, snapshot):
     )
 
 
-# TODO achtung funktioniert die zugrundeliegende strictness funktion richtig? wenn man test anschaut sieht man das original sequencen verloren gehen irgendwie... merge intervals evtl als solution?
-
-
 def test_ensure_minimum_length(load_data, snapshot):
     _, data_mat, gsd = load_data
 
@@ -358,7 +356,8 @@ def test_model_loading(load_data, snapshot):
     gsd._load_trained_model()
 
     assert gsd._trained_model is not None, "Trained model is None"
-    assert gsd.sample_rate == run_config.hz, f"Sample rate mismatch: expected {run_config.hz}, got {gsd.sample_rate}"
+    config = Config()
+    assert gsd.sample_rate == config.hz, f"Sample rate mismatch: expected {config.hz}, got {gsd.sample_rate}"
 
     snapshot.assert_match(str(model_path), "model_path")
 
