@@ -6,7 +6,7 @@ import pandas as pd
 from intervaltree import IntervalTree
 from intervaltree.interval import Interval
 
-from eargait.gait_sequence_detection.temp_utils_.array_handling import merge_intervals
+from eargait.utils.helpers import merge_intervals
 
 
 class CategorizedIntervals(NamedTuple):

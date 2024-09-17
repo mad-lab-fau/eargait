@@ -8,7 +8,7 @@ import pytorch_lightning as pl
 import torch
 from torch import nn
 
-from eargait.gait_sequence_detection.temp_model_related_Folder.conv_gru import ConvGRU
+from eargait.gait_sequence_detection.conv_gru import ConvGRU
 
 
 class HARPredictor(pl.LightningModule):

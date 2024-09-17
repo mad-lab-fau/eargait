@@ -154,7 +154,7 @@ gsd.plot(csv_activity_table)
 # To have a one number expression of how good the detection worked we can display the percentual overlap of predicted
 # and Ground truth sequences as the expresssion of true positive percentage of correctly identified walking sequences.
 
-from eargait.gait_sequence_detection.temp_utils_.overlapping_regions import categorize_intervals
+from eargait.utils.overlapping_regions import categorize_intervals
 
 
 def calculate_tp_percentage(detected_sequences, ground_truth_sequences):

@@ -11,10 +11,9 @@ import yaml
 from tpcp import Algorithm
 
 from eargait.utils.helper_gaitmap import SensorData, is_sensor_data
-from eargait.gait_sequence_detection.configuration import Config
 from eargait.utils.consts import LABELS
 from eargait.utils.helpers import get_standardized_data
-from eargait.gait_sequence_detection.temp_model_related_Folder.har_predictor import HARPredictor
+from eargait.gait_sequence_detection.har_predictor import HARPredictor
 
 Self = TypeVar("Self", bound="GaitSequenceDetection")
 pd.set_option("display.max_rows", None)
