@@ -1,6 +1,5 @@
 """Test the Sequence detector class."""
 import pickle
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -23,11 +22,10 @@ def setup_paths():
     sample_rate = config.hz
     print("This is the base path:", base_path)
 
-    data_path_pkl = config.data_base_path.joinpath("example_data", "pkl_files", "data_.pkl")
-    data_path_mat = config.data_base_path.joinpath("example_data", "mat_files", "normal")
-    calibration_path = config.data_base_path.joinpath("example_data", "calibration_files", "signia")
+    data_path_pkl = config.data_base_path.joinpath("tests", "test_data", "data_.pkl")
+    data_path_mat = config.data_base_path.joinpath("tests", "test_data", "subject01")
 
-    return data_path_pkl, data_path_mat, calibration_path, sample_rate
+    return data_path_pkl, data_path_mat, sample_rate
 
 
 def print_dict_structure(d, indent=0):
@@ -44,7 +42,7 @@ def print_dict_structure(d, indent=0):
 
 @pytest.fixture(scope="module")
 def load_data(setup_paths):
-    data_path_pkl, data_path_mat, calibration_path, sample_rate = setup_paths
+    data_path_pkl, data_path_mat, sample_rate = setup_paths
     with open(data_path_pkl, "rb") as f:
         data_pkl = pickle.load(f)
 
@@ -53,13 +51,13 @@ def load_data(setup_paths):
 
     session = Session.from_folder_path(data_path_mat)
     print(session.info)
-    align_calibrate_sess = session.align_calib_resample(str(calibration_path), resample_rate_hz=50, skip_calibration= True)
+    align_calibrate_sess = session.align_calib_resample(resample_rate_hz=50, skip_calibration= True)
     data_mat = align_gravity_and_convert_ear_to_ebf(align_calibrate_sess)
 
     print("Structure of data_mat:")
     print_dict_structure(data_mat)
 
-    gsd = GaitSequenceDetection(sample_rate=sample_rate)
+    gsd = GaitSequenceDetection(sample_rate = sample_rate)
 
     return data_pkl, data_mat, gsd
 

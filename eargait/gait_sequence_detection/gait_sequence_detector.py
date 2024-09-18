@@ -78,14 +78,23 @@ class GaitSequenceDetection(Algorithm):
     WINDOW_LENGTH = 3
 
     def __init__(
-        self, sample_rate, strictness: int = 0, minimum_seq_length: int = 1, criteria_order: str = "strictness_first"
+        self, sample_rate: int = 50, strictness: int = 0, minimum_seq_length: int = 1, criteria_order: str = "strictness_first"
     ):
         self.sample_rate = sample_rate
         self.strictness = strictness
         self.minimum_seq_length = minimum_seq_length
         self.criteria_order = criteria_order
+
+        # Defaults, possibly overrriden after loading of hyperparamterfile of used Model
+        self.selected_coords = ["x", "y", "z"]  # Default coordinates
+        self.window_length_in_ms = 3000  # Default window length
+        self.step_size_in_ms = 1500  # Default step size
+        self.body_frame_coords = False
+
+        self.model_path = self._get_model()
+        self._load_trained_model()
+
         self._window_length_samples = sample_rate * self.WINDOW_LENGTH
-        self.sequence_list_ = pd.DataFrame()
         self.activity_df = pd.DataFrame()
         self.data = pd.DataFrame()
         self.activity = ""
@@ -300,6 +309,12 @@ class GaitSequenceDetection(Algorithm):
                 hyperparams = yaml.safe_load(stream)
             except (yaml.YAMLError, FileNotFoundError):
                 raise FileNotFoundError(f"Could not find or load the hyperparameters file at {yaml_path}.")
+
+        self.sample_rate = hyperparams.get("hz", self.sample_rate)  # either hz value in models .yaml file or default = 50
+        self.selected_coords = hyperparams.get("selected_coords", self.selected_coords)
+        self.window_length_in_ms = hyperparams.get("window_length_in_ms",self.window_length_in_ms)
+        self.step_size_in_ms = hyperparams.get("step_size_in_ms", self.step_size_in_ms)
+        self.body_frame_coords = hyperparams.get("body_frame_coords", self.body_frame_coords)
 
         input_channels = hyperparams["input_channels"]
         checkpoint_path = list(self.model_path.joinpath("checkpoints").glob("*.ckpt"))

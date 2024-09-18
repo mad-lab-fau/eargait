@@ -34,7 +34,7 @@ class Config:
         self.hz = hz
         self.selected_coords = selected_coords if selected_coords is not None else ["x", "y", "z"]
         self.window_length_in_ms = window_length_in_ms
-        self.window_length = int((window_length_in_ms / 1000) * 200)
+        self.window_length = int((window_length_in_ms / 1000) * self.hz)
         self.step_size_in_ms = step_size_in_ms
         self.step_size = int((step_size_in_ms / 1000) * 200)
         self.frequency_step = int(200 / hz)
