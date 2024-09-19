@@ -12,18 +12,17 @@ from eargait.utils.helper_gaitmap import ValidationError, is_sensor_data
 from signialib import Session
 
 from eargait.gait_sequence_detection.gait_sequence_detector import GaitSequenceDetection
-from eargait.gait_sequence_detection.configuration import Config
 
 MAX_WINDOWS_FOR_SNAPSHOT = 50  # Restricts the Snapshots taken to 50 windows to limit json file size
 
 
 @pytest.fixture(scope="module")
 def setup_paths():
-    config = Config()
     base_path = Path(__file__).resolve().parent.parent
-    yaml_path = base_path.joinpath("eargait", "gait_sequence_detection", "pretrained_models", "50hz_grav_align",
-                                   "version_0", "hparams.yaml")
-    with open(yaml_path, 'r') as stream:
+    yaml_path = base_path.joinpath(
+        "eargait", "gait_sequence_detection", "pretrained_models", "50hz_grav_align", "version_0", "hparams.yaml"
+    )
+    with open(yaml_path, "r") as stream:
         hyperparams = yaml.safe_load(stream)
 
     sample_rate = hyperparams.get("hz", 50)
@@ -365,7 +364,9 @@ def test_model_loading(load_data, snapshot):
         hyperparams = yaml.safe_load(stream)
     sample_rate_from_yaml = hyperparams.get("hz", 50)
 
-    assert gsd.sample_rate == sample_rate_from_yaml, f"Sample rate mismatch: expected {sample_rate_from_yaml}, got {gsd.sample_rate}"
+    assert gsd.sample_rate == sample_rate_from_yaml, (
+        f"Sample rate mismatch: expected {sample_rate_from_yaml}, " f"got {gsd.sample_rate}"
+    )
 
     snapshot.assert_match(str(model_path), "model_path")
 
