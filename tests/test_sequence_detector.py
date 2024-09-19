@@ -6,6 +6,7 @@ import pandas as pd
 import pytest
 import torch
 import yaml
+from pathlib import Path
 from eargait.preprocessing import align_gravity_and_convert_ear_to_ebf
 from eargait.utils.helper_gaitmap import ValidationError, is_sensor_data
 from signialib import Session
@@ -15,15 +16,19 @@ from eargait.gait_sequence_detection.configuration import Config
 
 MAX_WINDOWS_FOR_SNAPSHOT = 50  # Restricts the Snapshots taken to 50 windows to limit json file size
 
+
 @pytest.fixture(scope="module")
 def setup_paths():
     config = Config()
-    base_path = config.data_base_path
-    sample_rate = config.hz
-    print("This is the base path:", base_path)
+    base_path = Path(__file__).resolve().parent.parent
+    yaml_path = base_path.joinpath("eargait", "gait_sequence_detection", "pretrained_models", "50hz_grav_align",
+                                   "version_0", "hparams.yaml")
+    with open(yaml_path, 'r') as stream:
+        hyperparams = yaml.safe_load(stream)
 
-    data_path_pkl = config.data_base_path.joinpath("tests", "test_data", "data_.pkl")
-    data_path_mat = config.data_base_path.joinpath("tests", "test_data", "subject01")
+    sample_rate = hyperparams.get("hz", 50)
+    data_path_pkl = base_path.joinpath("tests", "test_data", "data_.pkl")
+    data_path_mat = base_path.joinpath("tests", "test_data", "subject01")
 
     return data_path_pkl, data_path_mat, sample_rate
 
@@ -51,13 +56,13 @@ def load_data(setup_paths):
 
     session = Session.from_folder_path(data_path_mat)
     print(session.info)
-    align_calibrate_sess = session.align_calib_resample(resample_rate_hz=50, skip_calibration= True)
+    align_calibrate_sess = session.align_calib_resample(resample_rate_hz=50, skip_calibration=True)
     data_mat = align_gravity_and_convert_ear_to_ebf(align_calibrate_sess)
 
     print("Structure of data_mat:")
     print_dict_structure(data_mat)
 
-    gsd = GaitSequenceDetection(sample_rate = sample_rate)
+    gsd = GaitSequenceDetection(sample_rate=sample_rate)
 
     return data_pkl, data_mat, gsd
 
@@ -354,8 +359,13 @@ def test_model_loading(load_data, snapshot):
     gsd._load_trained_model()
 
     assert gsd._trained_model is not None, "Trained model is None"
-    config = Config()
-    assert gsd.sample_rate == config.hz, f"Sample rate mismatch: expected {config.hz}, got {gsd.sample_rate}"
+
+    yaml_path = gsd.model_path.joinpath("hparams.yaml")
+    with open(yaml_path, "r") as stream:
+        hyperparams = yaml.safe_load(stream)
+    sample_rate_from_yaml = hyperparams.get("hz", 50)
+
+    assert gsd.sample_rate == sample_rate_from_yaml, f"Sample rate mismatch: expected {sample_rate_from_yaml}, got {gsd.sample_rate}"
 
     snapshot.assert_match(str(model_path), "model_path")
 

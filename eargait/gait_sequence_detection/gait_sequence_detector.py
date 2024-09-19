@@ -19,6 +19,7 @@ Self = TypeVar("Self", bound="GaitSequenceDetection")
 pd.set_option("display.max_rows", None)
 repo_root = Path(__file__).resolve().parent.parent.parent
 
+
 class GaitSequenceDetection(Algorithm):
     """Find gait events in the IMU raw signal using a pre-trained DL HAR model.
 
@@ -78,7 +79,11 @@ class GaitSequenceDetection(Algorithm):
     WINDOW_LENGTH = 3
 
     def __init__(
-        self, sample_rate: int = 50, strictness: int = 0, minimum_seq_length: int = 1, criteria_order: str = "strictness_first"
+        self,
+        sample_rate: int = 50,
+        strictness: int = 0,
+        minimum_seq_length: int = 1,
+        criteria_order: str = "strictness_first",
     ):
         self.sample_rate = sample_rate
         self.strictness = strictness
@@ -212,12 +217,10 @@ class GaitSequenceDetection(Algorithm):
         activity_df = activity_df.reset_index(drop=True)
         self.activity_df = activity_df
 
-
         # 6. Connect consecutive windows & create table with start/stop
         difference = activity_df["start"].sub(activity_df["end"].shift())
         sequence = activity_df.groupby(difference.gt(0).cumsum()).agg({"start": "min", "end": "max"})
         self.sequence = sequence
-
 
         if self.criteria_order == "strictness_first":
             if self.strictness != 0:
@@ -261,19 +264,32 @@ class GaitSequenceDetection(Algorithm):
         use_default_model = True  # Default is model with gravity alignment & Conversion to Body Frame
         if self.sample_rate == 50:
             if use_default_model:
-                model_path = repo_root.joinpath("eargait", "gait_sequence_detection", "pretrained_models",
-                                                "50hz_grav_align", "version_0")
+                model_path = repo_root.joinpath(
+                    "eargait", "gait_sequence_detection", "pretrained_models", "50hz_grav_align", "version_0"
+                )
                 self.use_gravity_aligned_model = True
             else:
                 raise ValueError("No 50hz model available without gravity alignment and conversion to Body Frame.")
         elif self.sample_rate == 200:
             if use_default_model:
-                model_path = repo_root.joinpath("eargait", "gait_sequence_detection", "pretrained_models",
-                                                "200hz_grav_align", "default87", "version_0")
+                model_path = repo_root.joinpath(
+                    "eargait",
+                    "gait_sequence_detection",
+                    "pretrained_models",
+                    "200hz_grav_align",
+                    "default87",
+                    "version_0",
+                )
                 self.use_gravity_aligned_model = True
             else:
-                model_path = repo_root.joinpath("eargait", "gait_sequence_detection", "pretrained_models",
-                                                "200hz_grav_align_off", "default", "version_0")
+                model_path = repo_root.joinpath(
+                    "eargait",
+                    "gait_sequence_detection",
+                    "pretrained_models",
+                    "200hz_grav_align_off",
+                    "default",
+                    "version_0",
+                )
                 self.use_gravity_aligned_model = False
         else:
             raise ValueError("Unsupported sample rate. Please use either 50, or 200.")
@@ -282,11 +298,13 @@ class GaitSequenceDetection(Algorithm):
     def _standardize_data(self, tensor):
         data_array = tensor.numpy()
         if self.sample_rate == 50:
-            scaler_path = repo_root.joinpath("eargait", "gait_sequence_detection", "pretrained_models",
-                                             "50hz_gravity_aligned_scaler.save")
+            scaler_path = repo_root.joinpath(
+                "eargait", "gait_sequence_detection", "pretrained_models", "50hz_gravity_aligned_scaler.save"
+            )
         elif self.sample_rate == 200:
-            scaler_path = repo_root.joinpath("eargait", "gait_sequence_detection", "pretrained_models",
-                                             "200hz_gravity_aligned_scaler.save")
+            scaler_path = repo_root.joinpath(
+                "eargait", "gait_sequence_detection", "pretrained_models", "200hz_gravity_aligned_scaler.save"
+            )
 
         else:
             raise ValueError("Unsupported sample rate. Please use either 50 or 200.")
@@ -310,9 +328,11 @@ class GaitSequenceDetection(Algorithm):
             except (yaml.YAMLError, FileNotFoundError):
                 raise FileNotFoundError(f"Could not find or load the hyperparameters file at {yaml_path}.")
 
-        self.sample_rate = hyperparams.get("hz", self.sample_rate)  # either hz value in models .yaml file or default = 50
+        self.sample_rate = hyperparams.get(
+            "hz", self.sample_rate
+        )  # either hz value in models .yaml file or default = 50
         self.selected_coords = hyperparams.get("selected_coords", self.selected_coords)
-        self.window_length_in_ms = hyperparams.get("window_length_in_ms",self.window_length_in_ms)
+        self.window_length_in_ms = hyperparams.get("window_length_in_ms", self.window_length_in_ms)
         self.step_size_in_ms = hyperparams.get("step_size_in_ms", self.step_size_in_ms)
         self.body_frame_coords = hyperparams.get("body_frame_coords", self.body_frame_coords)
 
@@ -320,7 +340,8 @@ class GaitSequenceDetection(Algorithm):
         checkpoint_path = list(self.model_path.joinpath("checkpoints").glob("*.ckpt"))
         if len(checkpoint_path) != 1:
             raise FileNotFoundError(
-                f"Expected one checkpoint, but found {len(checkpoint_path)} at {self.model_path}/checkpoints.")
+                f"Expected one checkpoint, but found {len(checkpoint_path)} at {self.model_path}/checkpoints."
+            )
 
         # Get the trained model
         trained_model = HARPredictor.load_from_checkpoint(

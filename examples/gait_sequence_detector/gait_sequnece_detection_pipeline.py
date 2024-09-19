@@ -21,7 +21,7 @@ from eargait.utils.example_data import get_mat_example_data_path
 # Path to data file (.mat) or .mat data directory
 # Session should also work with txt file? so also gait detection?
 repo_root = Path(__file__).resolve().parent.parent.parent
-print("Repo Root",repo_root)
+print("Repo Root", repo_root)
 
 data_path = get_mat_example_data_path()
 csv_path = repo_root / "example_data/mat_files/walking_bout_indices.csv"
@@ -119,7 +119,6 @@ gsd.detect(ear_data, activity=["walking", "jogging", "stairs up", "stairs down"]
 gsd.plot()
 
 
-
 ########################################################################################################################
 # AB HIER ALLES WEG FÜR DAS MINIMAL BSP
 # %%
@@ -182,10 +181,12 @@ print(f"True Positive Percentage: {tp_percentage:.2f}%")
 # together to a single sequence.
 # minimum_seq_length
 # Determines the minimum length of a sequence (in windows). Needs to be >= 1.
-sequence = pd.DataFrame({
-        'start': [2100, 2550, 3750, 4750, 6000, 7300, 8250, 9300, 10200],
-        'end': [2550, 3600, 4450, 5850, 6900, 7950, 9000, 9450, 10350]
-    })
+sequence = pd.DataFrame(
+    {
+        "start": [2100, 2550, 3750, 4750, 6000, 7300, 8250, 9300, 10200],
+        "end": [2550, 3600, 4450, 5850, 6900, 7950, 9000, 9450, 10350],
+    }
+)
 print("Original Seqeuence:", sequence)
 sample_rate = 50
 strictness = 2
