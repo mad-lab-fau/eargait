@@ -10,13 +10,12 @@ import torch
 import yaml
 from tpcp import Algorithm
 
-from eargait.utils.helper_gaitmap import SensorData, is_sensor_data
-from eargait.utils.consts import LABELS
-from eargait.utils.helpers import get_standardized_data
 from eargait.gait_sequence_detection.har_predictor import HARPredictor
+from eargait.utils.consts import LABELS
+from eargait.utils.helper_gaitmap import SensorData, is_sensor_data
+from eargait.utils.helpers import get_standardized_data
 
 Self = TypeVar("Self", bound="GaitSequenceDetection")
-pd.set_option("display.max_rows", None)
 repo_root = Path(__file__).resolve().parent.parent.parent
 
 
@@ -201,7 +200,7 @@ class GaitSequenceDetection(Algorithm):
 
         # 3. Predictions
         tensor_windows = torch.transpose(tensor_windows, 1, 2)
-        self.tensor_windows = tensor_windows
+        # self.tensor_windows = tensor_windows
         tensor_windows = tensor_windows[:, None, :]
         _, output = self._trained_model(tensor_windows)
         _, predicted = torch.max(output, 1)
@@ -209,7 +208,7 @@ class GaitSequenceDetection(Algorithm):
         predictions_df = pd.DataFrame([self.labels[i] for i in predicted], columns=["activity"])
         predictions_df["start"] = predictions_df.index * self._window_length_samples
         predictions_df["end"] = (predictions_df.index * self._window_length_samples) + self._window_length_samples
-        self.predictions_df = predictions_df
+        # self.predictions_df = predictions_df
 
         # 5. Throw away all classes except requested activity
         is_doing_x = predictions_df["activity"].isin(self.activity)
@@ -220,7 +219,7 @@ class GaitSequenceDetection(Algorithm):
         # 6. Connect consecutive windows & create table with start/stop
         difference = activity_df["start"].sub(activity_df["end"].shift())
         sequence = activity_df.groupby(difference.gt(0).cumsum()).agg({"start": "min", "end": "max"})
-        self.sequence = sequence
+        # self.sequence = sequence
 
         if self.criteria_order == "strictness_first":
             if self.strictness != 0:
@@ -323,10 +322,7 @@ class GaitSequenceDetection(Algorithm):
         # Load hyperparams of the trained model
         yaml_path = self.model_path.joinpath("hparams.yaml")
         with open(yaml_path, "rb") as stream:
-            try:
-                hyperparams = yaml.safe_load(stream)
-            except (yaml.YAMLError, FileNotFoundError):
-                raise FileNotFoundError(f"Could not find or load the hyperparameters file at {yaml_path}.")
+            hyperparams = yaml.safe_load(stream)
 
         self.sample_rate = hyperparams.get(
             "hz", self.sample_rate

@@ -2,13 +2,13 @@
 import pickle
 from pathlib import Path
 
-import pandas as pd
-import numpy as np
 import numba
+import numpy as np
+import pandas as pd
 from scipy import signal
+from sklearn.preprocessing import StandardScaler
 
 from eargait.utils.helper_gaitmap import SensorData, is_sensor_data
-from sklearn.preprocessing import StandardScaler
 
 
 def load_pickle(path: Path):

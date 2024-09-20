@@ -8,13 +8,15 @@ This example illustrates how the gait sequence detection pipeline can be applied
 datasets recorded by Signia Hearing Aids.
 
 """
+from pathlib import Path
+
 # %%
 # Getting example data
 # -------------------------
 #
 # First, we import the necessary modules and load example data.
 import pandas as pd
-from pathlib import Path
+
 from eargait.gait_sequence_detection.gait_sequence_detector import GaitSequenceDetection
 from eargait.utils.example_data import get_mat_example_data_path
 
@@ -48,8 +50,8 @@ session.info
 # Two methods are provided: `StaticWindowGravityAlignment` and `TrimMeanGravityAlignment`.
 # Skipping this leads to unusable data on which the gait detection is applied.
 
-from eargait.utils import StaticWindowGravityAlignment, TrimMeanGravityAlignment
 from eargait.preprocessing import align_gravity_and_convert_ear_to_ebf
+from eargait.utils import StaticWindowGravityAlignment, TrimMeanGravityAlignment
 
 gravity_method = "static"
 static_method = StaticWindowGravityAlignment(sampling_rate_hz=50)

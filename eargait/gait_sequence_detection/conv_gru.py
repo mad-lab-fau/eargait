@@ -65,7 +65,7 @@ class ConvGRU(pl.LightningModule):
         self.gru_dropout_2 = nn.Dropout(gru_dropout_2)
         self.classifier = nn.Linear(gru_hidden, num_classes)
 
-    def forward(self, x):
+    def forward(self, x):  # noqa
         """Foward processing method of ConGRU."""
         # input of size N, C_in, L_in
         feature_output = self.feature_layers(x)

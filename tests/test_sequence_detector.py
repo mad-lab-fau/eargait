@@ -1,17 +1,17 @@
 """Test the Sequence detector class."""
 import pickle
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import pytest
 import torch
 import yaml
-from pathlib import Path
-from eargait.preprocessing import align_gravity_and_convert_ear_to_ebf
-from eargait.utils.helper_gaitmap import ValidationError, is_sensor_data
 from signialib import Session
 
 from eargait.gait_sequence_detection.gait_sequence_detector import GaitSequenceDetection
+from eargait.preprocessing import align_gravity_and_convert_ear_to_ebf
+from eargait.utils.helper_gaitmap import ValidationError, is_sensor_data
 
 MAX_WINDOWS_FOR_SNAPSHOT = 50  # Restricts the Snapshots taken to 50 windows to limit json file size
 
