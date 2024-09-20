@@ -1,4 +1,4 @@
-.. _examples-gait-sequence-detector:
+.. _example_gait_sequence_detector:
 
 Gait Sequence Detector
 ======================
