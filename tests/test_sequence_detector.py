@@ -15,7 +15,6 @@ from eargait.utils.helper_gaitmap import ValidationError, is_sensor_data
 
 MAX_WINDOWS_FOR_SNAPSHOT = 50  # Restricts the Snapshots taken to 50 windows to limit json file size
 
-
 @pytest.fixture(scope="module")
 def setup_paths():
     base_path = Path(__file__).resolve().parent.parent
@@ -26,10 +25,9 @@ def setup_paths():
         hyperparams = yaml.safe_load(stream)
 
     sample_rate = hyperparams.get("hz", 50)
-    data_path_pkl = base_path.joinpath("tests", "test_data", "data_.pkl")
     data_path_mat = base_path.joinpath("tests", "test_data", "subject01")
 
-    return data_path_pkl, data_path_mat, sample_rate
+    return data_path_mat, sample_rate
 
 
 def print_dict_structure(d, indent=0):
@@ -46,12 +44,7 @@ def print_dict_structure(d, indent=0):
 
 @pytest.fixture(scope="module")
 def load_data(setup_paths):
-    data_path_pkl, data_path_mat, sample_rate = setup_paths
-    with open(data_path_pkl, "rb") as f:
-        data_pkl = pickle.load(f)
-
-    print("Structure of data_pkl:")
-    print_dict_structure(data_pkl)
+    data_path_mat, sample_rate = setup_paths
 
     session = Session.from_folder_path(data_path_mat)
     print(session.info)
@@ -63,7 +56,7 @@ def load_data(setup_paths):
 
     gsd = GaitSequenceDetection(sample_rate=sample_rate)
 
-    return data_pkl, data_mat, gsd
+    return data_mat, gsd
 
 
 def prepare_data(data):
@@ -87,16 +80,12 @@ def prepare_data(data):
 
 
 def test_dataset_loading(load_data, snapshot):
-    data_pkl, data_mat, gsd = load_data
+    data_mat, gsd = load_data
 
-    data_pkl_left = prepare_data(pd.DataFrame(data_pkl["sensor_data"]["left_sensor"]))
-    data_pkl_right = prepare_data(pd.DataFrame(data_pkl["sensor_data"]["right_sensor"]))
     data_mat_left = prepare_data(pd.DataFrame(data_mat["left_sensor"]))
     data_mat_right = prepare_data(pd.DataFrame(data_mat["right_sensor"]))
 
     datasets = {
-        "data_pkl_left": data_pkl_left,
-        "data_pkl_right": data_pkl_right,
         "data_mat_left": data_mat_left,
         "data_mat_right": data_mat_right,
     }
@@ -123,7 +112,7 @@ def test_dataset_loading(load_data, snapshot):
 
 @pytest.mark.parametrize("invalid_activity", ["invalid_activity", "running_fast", "unknown"])
 def test_activity_validation(load_data, invalid_activity, snapshot):
-    _, data_mat, gsd = load_data
+    data_mat, gsd = load_data
     data_mat_left = prepare_data(pd.DataFrame(data_mat["left_sensor"]))
 
     with pytest.raises(ValueError) as excinfo:
@@ -144,7 +133,7 @@ def test_activity_validation(load_data, invalid_activity, snapshot):
 
 
 def test_strictness_and_min_length(load_data, snapshot):
-    _, data_mat, gsd = load_data
+    data_mat, gsd = load_data
 
     data_mat_left = prepare_data(pd.DataFrame(data_mat["left_sensor"]))
 
@@ -162,7 +151,7 @@ def test_strictness_and_min_length(load_data, snapshot):
 
 
 def test_multi_sensor_handling(load_data, snapshot):
-    _, data_mat, gsd = load_data
+    data_mat, gsd = load_data
     gsd.strictness = 0
     gsd.minimum_seq_length = 1
     data_mat_multi = {
@@ -191,7 +180,7 @@ def test_multi_sensor_handling(load_data, snapshot):
 
 
 def test_detect_single(load_data, snapshot):
-    _, data_mat, gsd = load_data
+    data_mat, gsd = load_data
 
     # Prepare data: trimming to just acceleration columns
     data_mat_left = prepare_data(pd.DataFrame(data_mat["left_sensor"]))
@@ -280,7 +269,7 @@ def test_detect_single(load_data, snapshot):
 
 
 def test_ensure_strictness(load_data, snapshot):
-    _, data_mat, gsd = load_data
+    data_mat, gsd = load_data
 
     data_mat_left = prepare_data(pd.DataFrame(data_mat["left_sensor"]))
     data_mat_left = data_mat_left[["acc_x", "acc_y", "acc_z"]]
@@ -316,7 +305,7 @@ def test_ensure_strictness(load_data, snapshot):
 
 
 def test_ensure_minimum_length(load_data, snapshot):
-    _, data_mat, gsd = load_data
+    data_mat, gsd = load_data
 
     data_mat_left = prepare_data(pd.DataFrame(data_mat["left_sensor"]))
     data_mat_left = data_mat_left[["acc_x", "acc_y", "acc_z"]]
@@ -349,7 +338,7 @@ def test_ensure_minimum_length(load_data, snapshot):
 
 
 def test_model_loading(load_data, snapshot):
-    _, data_mat, gsd = load_data
+    data_mat, gsd = load_data
 
     model_path = gsd._get_model()
     assert model_path is not None, "Model path is None"
@@ -372,7 +361,7 @@ def test_model_loading(load_data, snapshot):
 
 
 def test_load_trained_model(load_data, snapshot):
-    _, data_mat, gsd = load_data
+    data_mat, gsd = load_data
 
     gsd.model_path = gsd._get_model()
     gsd._load_trained_model()

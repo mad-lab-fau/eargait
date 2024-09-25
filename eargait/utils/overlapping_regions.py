@@ -44,11 +44,18 @@ def categorize_intervals(gsd_list_detected: pd.DataFrame, gsd_list_reference: pd
 
     Examples
     --------
-    >>> from HARTrainEval.experiment.eval.overlapping_regions import categorize_intervals
-    >>> detected = pd.DataFrame([[0, 10], [20, 30]], columns=["start", "end"])
-    >>> reference = pd.DataFrame([[0, 10], [15, 25]], columns=["start", "end"])
-    >>> result = categorize_intervals(detected, reference)
-    >>> result.tp_intervals
+    Input DF (detected):
+       start  end
+    0      0   10
+    1     20   30
+
+    Reference DF (reference):
+       start  end
+    0      0   10
+    1     15   25
+    -> Apply categorized_intervals (detected,reference)
+
+    result.tp_intervals :
        start  end
     0      0   10
     1     20   25
