@@ -1,0 +1,1 @@
+C:\Users\jahne\Desktop\Eargait\eargait\eargait\gait_sequence_detection\pretrained_models\50hz_grav_align\version_0\checkpoints\epoch=36-step=69818.ckpt
