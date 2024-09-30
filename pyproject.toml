@@ -32,7 +32,7 @@ tensorflow-io-gcs-filesystem = [
     {version= "^0.34.0", platform = 'darwin'},
     {version= "^0.34.0", platform = 'linux'}
 ]
-torch = "2.0.1"
+torch = ">=2.0.0, !=2.0.1, !=2.1.0, <2.3.0"
 imbalanced-learn = "0.8.1"
 pytorch-lightning = "1.5.3"
 intervaltree = "3.1.0"
