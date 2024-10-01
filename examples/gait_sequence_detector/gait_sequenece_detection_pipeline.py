@@ -9,6 +9,7 @@ datasets recorded by Signia Hearing Aids.
 
 """
 from pathlib import Path
+
 import matplotlib.pyplot as plt
 
 # %%
@@ -156,7 +157,11 @@ gsd.plot(csv_activity_table)
 # To have a one number expression of how good the detection worked we can display the percentual overlap of predicted
 # and Ground truth sequences as the expresssion of true positive percentage of correctly identified walking sequences.
 
-from eargait.utils.overlapping_regions import categorize_intervals, categorize_intervals_per_sample, plot_categorized_intervals
+from eargait.utils.overlapping_regions import (
+    categorize_intervals,
+    categorize_intervals_per_sample,
+    plot_categorized_intervals,
+)
 
 
 def calculate_tp_percentage(detected_sequences, ground_truth_sequences):
@@ -176,6 +181,7 @@ tp_percentage = calculate_tp_percentage(detected_sequences, ground_truth_sequenc
 
 print(f"True Positive Percentage: {tp_percentage:.2f}%")
 
+
 def calculate_sample_based_metrics(detected_sequences, ground_truth_sequences):
     # Get categorized intervals (TP, FP, FN, TN) based on sample level matching
     categorized_intervals2 = categorize_intervals_per_sample(
@@ -187,21 +193,21 @@ def calculate_sample_based_metrics(detected_sequences, ground_truth_sequences):
     ground_truth_duration = sum(ground_truth_sequences["end"] - ground_truth_sequences["start"])
 
     # True Positives (TP)
-    tp_intervals = categorized_intervals2[categorized_intervals2['match_type'] == 'tp']
+    tp_intervals = categorized_intervals2[categorized_intervals2["match_type"] == "tp"]
     true_positive_duration = sum(tp_intervals["end"] - tp_intervals["start"])
 
     # False Positives (FP)
-    fp_intervals = categorized_intervals2[categorized_intervals2['match_type'] == 'fp']
+    fp_intervals = categorized_intervals2[categorized_intervals2["match_type"] == "fp"]
     false_positive_duration = sum(fp_intervals["end"] - fp_intervals["start"])
 
     # False Negatives (FN)
-    fn_intervals = categorized_intervals2[categorized_intervals2['match_type'] == 'fn']
+    fn_intervals = categorized_intervals2[categorized_intervals2["match_type"] == "fn"]
     false_negative_duration = sum(fn_intervals["end"] - fn_intervals["start"])
 
     # True Negatives (TN), only calculated if total_samples is provided
     true_negative_duration = 0
     if total_samples is not None:
-        tn_intervals = categorized_intervals2[categorized_intervals2['match_type'] == 'tn']
+        tn_intervals = categorized_intervals2[categorized_intervals2["match_type"] == "tn"]
         true_negative_duration = sum(tn_intervals["end"] - tn_intervals["start"])
 
     # Calculate percentages for TP, FP, FN, and TN based on ground truth duration
@@ -231,9 +237,11 @@ ground_truth_sequences = csv_activity_table[["start", "end"]]
 total_samples = len(detected_sequences)  # You can replace this with the actual total sample count
 
 categorized_intervals2, metrics = calculate_sample_based_metrics(detected_sequences, ground_truth_sequences)
-plot_categorized_intervals(gsd_list_detected=detected_sequences,
-                           gsd_list_reference=ground_truth_sequences,
-                           categorized_intervals=categorized_intervals2)
+plot_categorized_intervals(
+    gsd_list_detected=detected_sequences,
+    gsd_list_reference=ground_truth_sequences,
+    categorized_intervals=categorized_intervals2,
+)
 plt.show()
 
 ########################################################################################################################

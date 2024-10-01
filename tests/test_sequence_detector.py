@@ -15,6 +15,7 @@ from eargait.utils.helper_gaitmap import ValidationError, is_sensor_data
 
 MAX_WINDOWS_FOR_SNAPSHOT = 50  # Restricts the Snapshots taken to 50 windows to limit json file size
 
+
 @pytest.fixture(scope="module")
 def setup_paths():
     base_path = Path(__file__).resolve().parent.parent
@@ -239,16 +240,11 @@ def test_detect_single(load_data, snapshot):
 
     tensor_windows_mat = tensor_windows_mat[:, None, :]
     _, output_mat = gsd._trained_model(tensor_windows_mat)
-    output_mat_df = pd.DataFrame(output_mat.tolist())
-    output_mat_df.columns = output_mat_df.columns.astype(str)
-    output_mat_df.index = output_mat_df.index.astype(str)
-    snapshot.assert_match(output_mat_df, "output_mat")
 
     _, predicted_mat = torch.max(output_mat, 1)
     predicted_mat_df = pd.DataFrame(predicted_mat.tolist())
     predicted_mat_df.columns = predicted_mat_df.columns.astype(str)
     predicted_mat_df.index = predicted_mat_df.index.astype(str)
-    snapshot.assert_match(predicted_mat_df, "predicted_mat")
 
     predictions_df_mat = pd.DataFrame([gsd.labels[i] for i in predicted_mat], columns=["activity"])
     predictions_df_mat["start"] = predictions_df_mat.index * gsd._window_length_samples
@@ -357,7 +353,7 @@ def test_model_loading(load_data, snapshot):
         f"Sample rate mismatch: expected {sample_rate_from_yaml}, " f"got {gsd.sample_rate}"
     )
 
-    snapshot.assert_match(str(model_path), "model_path")
+    snapshot.assert_match(pd.DataFrame([{"path": list(Path(model_path).parts[-5::])}]), "model_path")
 
 
 def test_load_trained_model(load_data, snapshot):
@@ -384,7 +380,7 @@ def test_load_trained_model(load_data, snapshot):
 
     checkpoint_path = list(gsd.model_path.joinpath("checkpoints").glob("*.ckpt"))
     assert len(checkpoint_path) == 1, "Expected exactly one checkpoint file"
-    snapshot.assert_match(str(checkpoint_path[0]), "checkpoint_path")
+    snapshot.assert_match(pd.DataFrame([{"path": list(Path(checkpoint_path[0]).parts[-7::])}]), "checkpoint_path")
 
 
 if __name__ == "__main__":

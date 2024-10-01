@@ -1,15 +1,16 @@
 """Class to validate gait sequence detection results.
+
 Functions were largely copied from the MobGap Github repository with consent of their Contributers.
 https://github.com/mobilise-d/mobgap
 """
-from typing import NamedTuple
 
+from typing import Any, NamedTuple, Optional, Union
+
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 from intervaltree import IntervalTree
 from intervaltree.interval import Interval
-from typing import Any, Optional, Union
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from typing_extensions import Unpack
@@ -130,8 +131,7 @@ def categorize_intervals(gsd_list_detected: pd.DataFrame, gsd_list_reference: pd
 def categorize_intervals_per_sample(
     *, gsd_list_detected: pd.DataFrame, gsd_list_reference: pd.DataFrame, n_overall_samples: Optional[int] = None
 ) -> pd.DataFrame:
-    """
-    Evaluate detected gait sequence intervals against a reference on a sample-wise level.
+    """Evaluate detected gait sequence intervals against a reference on a sample-wise level.
 
     The detected and reference dataframes are expected to have columns namend "start" and "end" containing the
     start and end indices of the respective gait sequences.
@@ -161,19 +161,6 @@ def categorize_intervals_per_sample(
         `match_type`.
         Keep in mind that the intervals are not identical to the intervals in `gsd_list_detected`, but are rather split
         into subsequences according to their match type with the reference.
-
-    Examples
-    --------
-    >>> from mobgap.gait_sequences.evaluation import categorize_intervals_per_sample
-    >>> detected = pd.DataFrame([[0, 10], [20, 30]], columns=["start", "end"])
-    >>> reference = pd.DataFrame([[0, 10], [15, 25]], columns=["start", "end"])
-    >>> result = categorize_intervals_per_sample(detected, reference)
-    >>> result.tp_intervals
-           start  end match_type
-    0      0   10         tp
-    1     15   20         fn
-    2     20   25         tp
-    3     25   30         fp
 
     See Also
     --------
@@ -243,6 +230,7 @@ def categorize_intervals_per_sample(
 
     return categorized_intervals
 
+
 def _check_input_sanity(
     gsd_list_detected: pd.DataFrame, gsd_list_reference: pd.DataFrame
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -257,6 +245,7 @@ def _check_input_sanity(
             "`gsd_list_detected` and `gsd_list_reference` must have columns named 'start' and 'end'."
         ) from e
     return detected, reference
+
 
 def _get_tn_intervals(categorized_intervals: pd.DataFrame, n_overall_samples: Union[int, None]) -> pd.DataFrame:
     """Add true negative intervals to the categorized intervals by inferring them from the other intervals.
@@ -286,6 +275,7 @@ def _get_tn_intervals(categorized_intervals: pd.DataFrame, n_overall_samples: Un
     tn_intervals["match_type"] = "tn"
     return tn_intervals
 
+
 def _get_false_matches_from_overlap_data(overlaps: list[Interval], interval: Interval) -> list[list[int]]:
     f_intervals = []
     for i, overlap in enumerate(overlaps):
@@ -311,7 +301,9 @@ def _get_false_matches_from_overlap_data(overlaps: list[Interval], interval: Int
             f_intervals.append([overlap.end, fn_end])
 
     return f_intervals
-def _get_false_matches_from_overlap_data(overlaps: list[Interval], interval: Interval) -> list[list[int]]:
+
+
+"""def _get_false_matches_from_overlap_data(overlaps: list[Interval], interval: Interval) -> list[list[int]]: # noqa
     f_intervals = []
     for i, overlap in enumerate(overlaps):
         prev_el = overlaps[i - 1] if i > 0 else None
@@ -335,7 +327,8 @@ def _get_false_matches_from_overlap_data(overlaps: list[Interval], interval: Int
                 # fn_end = next_el.begin
             f_intervals.append([overlap.end, fn_end])
 
-    return f_intervals
+    return f_intervals"""
+
 
 def plot_categorized_intervals(
     gsd_list_detected: pd.DataFrame, gsd_list_reference: pd.DataFrame, categorized_intervals: pd.DataFrame
@@ -355,6 +348,7 @@ def plot_categorized_intervals(
         handle.set_linewidth(10)
     plt.tight_layout()
     return fig
+
 
 def _plot_intervals_from_df(df: pd.DataFrame, y: int, ax: Axes, **kwargs: Unpack[dict[str, Any]]) -> None:
     label_set = False
