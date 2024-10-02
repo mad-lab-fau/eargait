@@ -15,6 +15,7 @@ from eargait.utils.helper_gaitmap import ValidationError, is_sensor_data
 
 class TestGaitSequenceDetector:
     """Test Class for the Gait Sequence Detector:"""
+
     MAX_WINDOWS_FOR_SNAPSHOT = 50  # Restricts the Snapshots taken to 50 windows to limit json file size
 
     @classmethod
@@ -30,7 +31,6 @@ class TestGaitSequenceDetector:
 
         cls.data_path_mat = base_path.joinpath("tests", "test_data", "subject01")
 
-
         cls.session = Session.from_folder_path(cls.data_path_mat)
         align_calibrate_sess = cls.session.align_calib_resample(resample_rate_hz=50, skip_calibration=True)
         cls.data_mat = align_gravity_and_convert_ear_to_ebf(align_calibrate_sess)
@@ -40,10 +40,18 @@ class TestGaitSequenceDetector:
     def prepare_data(self, data):
         return data.rename(
             columns={
-                "x": "acc_x", "y": "acc_y", "z": "acc_z",
-                "hiGyrX": "gyr_x", "hiGyrY": "gyr_y", "hiGyrZ": "gyr_z",
-                "acc_pa": "acc_x", "acc_ml": "acc_y", "acc_si": "acc_z",
-                "gyr_pa": "gyr_x", "gyr_ml": "gyr_y", "gyr_si": "gyr_z",
+                "x": "acc_x",
+                "y": "acc_y",
+                "z": "acc_z",
+                "hiGyrX": "gyr_x",
+                "hiGyrY": "gyr_y",
+                "hiGyrZ": "gyr_z",
+                "acc_pa": "acc_x",
+                "acc_ml": "acc_y",
+                "acc_si": "acc_z",
+                "gyr_pa": "gyr_x",
+                "gyr_ml": "gyr_y",
+                "gyr_si": "gyr_z",
             }
         )
 
@@ -51,9 +59,7 @@ class TestGaitSequenceDetector:
         data_mat_left = self.prepare_data(pd.DataFrame(self.data_mat["left_sensor"]))
         data_mat_right = self.prepare_data(pd.DataFrame(self.data_mat["right_sensor"]))
 
-        datasets = {
-            "data_mat_left": data_mat_left,
-            "data_mat_right": data_mat_right }
+        datasets = {"data_mat_left": data_mat_left, "data_mat_right": data_mat_right}
 
         combined_results = []
 
@@ -103,7 +109,9 @@ class TestGaitSequenceDetector:
         self.gsd.minimum_seq_length = invalid_min_length
         with pytest.raises(AssertionError):
             self.gsd.detect(data_mat_left, activity="walking")
-        snapshot.assert_match(pd.DataFrame([{"minimum_seq_length": self.gsd.minimum_seq_length}]), "minimum_length_error")
+        snapshot.assert_match(
+            pd.DataFrame([{"minimum_seq_length": self.gsd.minimum_seq_length}]), "minimum_length_error"
+        )
 
     def test_multi_sensor_handling(self, snapshot):
         self.gsd.strictness = 0
@@ -115,19 +123,24 @@ class TestGaitSequenceDetector:
 
         self.gsd.detect(data_mat_multi, activity="walking")
         multi_result_type = "multi" if isinstance(self.gsd.sequence_list_, dict) else "single"
-        assert isinstance(self.gsd.sequence_list_, dict), "Expected multi-sensor data to result in a dictionary of results"
+        assert isinstance(
+            self.gsd.sequence_list_, dict
+        ), "Expected multi-sensor data to result in a dictionary of results"
 
         data_mat_single = self.prepare_data(pd.DataFrame(self.data_mat["left_sensor"]))
 
         self.gsd.detect(data_mat_single, activity="walking")
         single_result_type = "single" if isinstance(self.gsd.sequence_list_, pd.DataFrame) else "multi"
-        assert isinstance(self.gsd.sequence_list_,
-                          pd.DataFrame), "Expected single-sensor data to result in DataFrame of results"
+        assert isinstance(
+            self.gsd.sequence_list_, pd.DataFrame
+        ), "Expected single-sensor data to result in DataFrame of results"
 
         output = pd.DataFrame(
             [
                 {"sensor_type": "multi", "result_type": multi_result_type},
-                {"sensor_type": "single", "result_type": single_result_type}])
+                {"sensor_type": "single", "result_type": single_result_type},
+            ]
+        )
 
         snapshot.assert_match(output, "sensor_handling_results")
 
@@ -138,7 +151,7 @@ class TestGaitSequenceDetector:
         self.gsd.model_path = self.gsd._get_model()
         self.gsd._load_trained_model()
 
-        #print(f"Model path: {self.gsd.model_path}")
+        # print(f"Model path: {self.gsd.model_path}")
 
         self.gsd.activity = ["walking"]
 
@@ -154,7 +167,7 @@ class TestGaitSequenceDetector:
 
         tensor_windows_mat = torch.tensor(np.stack(windows_mat), dtype=torch.float32)
         if tensor_windows_mat.shape[0] > self.MAX_WINDOWS_FOR_SNAPSHOT:
-            tensor_windows_mat = tensor_windows_mat[:self.MAX_WINDOWS_FOR_SNAPSHOT]
+            tensor_windows_mat = tensor_windows_mat[: self.MAX_WINDOWS_FOR_SNAPSHOT]
 
         tensor_windows_mat_df = pd.DataFrame(tensor_windows_mat.tolist()).reset_index(drop=True)
         tensor_windows_mat_df.columns = tensor_windows_mat_df.columns.astype(str)
@@ -165,7 +178,7 @@ class TestGaitSequenceDetector:
 
         tensor_windows_mat = self.gsd._standardize_data(tensor_windows_mat)
         if tensor_windows_mat.shape[0] > self.MAX_WINDOWS_FOR_SNAPSHOT:
-            tensor_windows_mat = tensor_windows_mat[:self.MAX_WINDOWS_FOR_SNAPSHOT]
+            tensor_windows_mat = tensor_windows_mat[: self.MAX_WINDOWS_FOR_SNAPSHOT]
         standardized_tensor_windows_mat_df = pd.DataFrame(tensor_windows_mat.tolist())
         standardized_tensor_windows_mat_df.columns = standardized_tensor_windows_mat_df.columns.astype(str)
         standardized_tensor_windows_mat_df.index = standardized_tensor_windows_mat_df.index.astype(str)
@@ -173,7 +186,7 @@ class TestGaitSequenceDetector:
 
         tensor_windows_mat = torch.transpose(tensor_windows_mat, 1, 2)
         if tensor_windows_mat.shape[0] > self.MAX_WINDOWS_FOR_SNAPSHOT:
-            tensor_windows_mat = tensor_windows_mat[:self.MAX_WINDOWS_FOR_SNAPSHOT]
+            tensor_windows_mat = tensor_windows_mat[: self.MAX_WINDOWS_FOR_SNAPSHOT]
         transposed_tensor_windows_mat_df = pd.DataFrame(tensor_windows_mat.tolist())
         transposed_tensor_windows_mat_df.columns = transposed_tensor_windows_mat_df.columns.astype(str)
         transposed_tensor_windows_mat_df.index = transposed_tensor_windows_mat_df.index.astype(str)
@@ -189,7 +202,9 @@ class TestGaitSequenceDetector:
 
         predictions_df_mat = pd.DataFrame([self.gsd.labels[i] for i in predicted_mat], columns=["activity"])
         predictions_df_mat["start"] = predictions_df_mat.index * self.gsd._window_length_samples
-        predictions_df_mat["end"] = (predictions_df_mat.index * self.gsd._window_length_samples) + self.gsd._window_length_samples
+        predictions_df_mat["end"] = (
+            predictions_df_mat.index * self.gsd._window_length_samples
+        ) + self.gsd._window_length_samples
         predictions_df_mat.index = predictions_df_mat.index.astype(str)
         snapshot.assert_match(predictions_df_mat, "predictions_df_mat")
 
