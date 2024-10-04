@@ -8,41 +8,23 @@ This example illustrates how the gait sequence detection pipeline can be applied
 datasets recorded by Signia Hearing Aids.
 
 """
-from pathlib import Path
-
-import matplotlib.pyplot as plt
-import pandas as pd
-from signialib import Session
-
-from eargait.gait_sequence_detection.gait_sequence_detector import GaitSequenceDetection
-from eargait.utils.example_data import get_mat_example_data_path, load_groundtruth
-
 # %%
 # Getting example data
 # --------------------
 #
+# Get example data, load it, align with gravity alignment and transformation into body frame.
+# For mor information on data loading see :ref:`example_load_data`.
 
+from eargait.preprocessing import align_gravity_and_convert_ear_to_ebf, load
+from eargait.utils import TrimMeanGravityAlignment
+from eargait.utils.example_data import get_mat_example_data_path, load_groundtruth
 
-# Get example data and load it
 data_path = get_mat_example_data_path()
 target_sample_rate = 50
-
-session = Session.from_folder_path(data_path)
-align_calibrate_sess = session.align_calib_resample(resample_rate_hz=target_sample_rate, skip_calibration=True)
-
-# %%
-# Gravity alignment and transformation into body frame
-# ----------------------------------------------------
-#
-# Align session to gravity and transform the coordinate system into a body frame.
-# Two methods are provided: `StaticWindowGravityAlignment` and `TrimMeanGravityAlignment`.
-# Skipping this leads to unusable data on which the gait detection is applied.
-
-from eargait.preprocessing import align_gravity_and_convert_ear_to_ebf
-from eargait.utils import StaticWindowGravityAlignment, TrimMeanGravityAlignment
-
+session = load(data_path, target_sample_rate_hz=target_sample_rate, skip_calibration=True)
 trim_method = TrimMeanGravityAlignment(sampling_rate_hz=target_sample_rate)
-ear_data = align_gravity_and_convert_ear_to_ebf(align_calibrate_sess, trim_method)
+ear_data = align_gravity_and_convert_ear_to_ebf(session, trim_method)
+
 
 # %%
 # Initialize Gait Sequence Detection
@@ -51,6 +33,7 @@ ear_data = align_gravity_and_convert_ear_to_ebf(align_calibrate_sess, trim_metho
 # We instantiate the `GaitSequenceDetection` class with the desired parameters.
 # strictness=0 and minimum_sequence_length=1 are seen as standard.
 # strictness is defined as >=0 while minimum_seq_length as >=1 definitions of these parameters in the Gsd class.
+from eargait.gait_sequence_detection.gait_sequence_detector import GaitSequenceDetection
 
 gsd = GaitSequenceDetection(sample_rate=target_sample_rate, strictness=0, minimum_seq_length=1)
 
@@ -64,14 +47,9 @@ gsd = GaitSequenceDetection(sample_rate=target_sample_rate, strictness=0, minimu
 # according to this in "align_calibrate_sess"
 
 gsd.detect(ear_data, activity="walking")
+sequence_list = gsd.sequence_list_
+print("Timeframes of specified activity", sequence_list)
 
-# %%
-# Display Detected Sequences
-# --------------------------
-#
-# Print the timeframes where the specified activity occurs in the data.
-
-print("Timeframes of specified activity", gsd.sequence_list_)
 
 # %%
 # Plot Detected Sequences
@@ -99,9 +77,6 @@ gsd = GaitSequenceDetection(sample_rate=target_sample_rate, strictness=0, minimu
 # by passing a list of activities to the `detect` method.
 
 gsd.detect(ear_data, activity=["walking", "jogging", "stairs up", "stairs down"])
-
-# this is also plottable_
-gsd.plot()
 
 
 # %%
