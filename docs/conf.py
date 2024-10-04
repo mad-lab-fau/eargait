@@ -173,7 +173,7 @@ sphinx_gallery_conf = {
         [
             "../examples/check_installation",
             "../examples/load_data",
-            "../examples/gait_sequence_detector"
+            "../examples/gait_sequence_detector",
             "../examples/gait_analysis_pipeline",
             "../examples/temporal_parameter_estimation",
             "../examples/spatial_parameter_estimation",
