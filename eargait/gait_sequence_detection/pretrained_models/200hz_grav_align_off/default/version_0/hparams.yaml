@@ -1,0 +1,59 @@
+args:
+  batch_size: 16
+  conv_gru_1_dim: 40
+  conv_gru_1_dropout: 0.4
+  conv_gru_1_kernel: 5
+  conv_gru_2_dim: 10
+  conv_gru_2_dropout: 0.5
+  conv_gru_2_kernel: 5
+  conv_gru_3_dim: 40
+  conv_gru_3_dropout: 0.4
+  conv_gru_3_kernel: 3
+  conv_gru_layers: 3
+  gru_dropout_1: 0.2
+  gru_dropout_2: 0
+  gru_hidden_1: 32
+  gru_hidden_2: 0
+  gru_layers: 1
+  learning_rate: 0.00028389535753997483
+  optimizer: ADAM
+body_frame_coords: false
+hz: 200
+imbalance_method: SMOTE
+input_channels: 3
+model: conv_gru
+num_classes: 10
+selected_coords:
+- x
+- y
+- z
+sfu_data: false
+step_size_in_ms: 1500
+test_participants:
+- 10
+- 11
+train_participants:
+- 8
+- 5
+- 13
+- 3
+- 20
+- 18
+- 15
+- 2
+- 9
+- 21
+- 4
+- 14
+- 7
+- 12
+- 16
+- 6
+validation_participants:
+- 0
+- 19
+- 17
+- 1
+weight_decay: 0
+window_length_in_ms: 3000
+window_length_in_samples: 600

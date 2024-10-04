@@ -1,0 +1,32 @@
+{
+    "schema":{
+        "fields":[
+            {
+                "name":"index",
+                "type":"integer"
+            },
+            {
+                "name":"path",
+                "type":"string"
+            }
+        ],
+        "primaryKey":[
+            "index"
+        ],
+        "pandas_version":"1.4.0"
+    },
+    "data":[
+        {
+            "index":0,
+            "path":[
+                "eargait",
+                "gait_sequence_detection",
+                "pretrained_models",
+                "50hz_grav_align",
+                "version_0",
+                "checkpoints",
+                "epoch=36-step=69818.ckpt"
+            ]
+        }
+    ]
+}

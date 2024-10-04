@@ -34,3 +34,15 @@ MAX_VALUES_GRAV_ALIGNED_BF_ACC = {"acc_pa": 4.0, "acc_ml": 1.5, "acc_si": -7.5}
 
 #: Maximum reasonable values of acceleration data in sensor frame
 # MAX_VALUES_BF_ACC = {"acc_pa": -3.5, "acc_ml": -1.5, "acc_si": -10.5}
+LABELS = [
+    "jogging",
+    "biking",
+    "walking",
+    "sitting",
+    "lying",
+    "jumping",
+    "stairs up",
+    "stairs down",
+    "stand",
+    "transition",
+]
