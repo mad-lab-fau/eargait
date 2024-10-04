@@ -42,3 +42,11 @@ def plot_image(image_path):
     plt.axis("off")
     plt.imshow(im_array)
     plt.show()
+
+
+def load_groundtruth(csv_path, target_sample_rate):
+    csv_table = pd.read_csv(csv_path)
+    downsampling_factor = 200 / target_sample_rate
+    csv_table["start"] = (csv_table["start"] / downsampling_factor).astype(int)
+    csv_table["stop"] = (csv_table["stop"] / downsampling_factor).astype(int)
+    return csv_table

@@ -2,7 +2,7 @@ r"""
 .. _example_load_data:
 
 Load Data by Signia Hearing Aids
-===============================
+================================
 
 This example shows you how to load data recorded with Signia hearing aids.
 Please note, that the privat python package signialib is required for running this example.

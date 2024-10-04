@@ -303,33 +303,6 @@ def _get_false_matches_from_overlap_data(overlaps: list[Interval], interval: Int
     return f_intervals
 
 
-"""def _get_false_matches_from_overlap_data(overlaps: list[Interval], interval: Interval) -> list[list[int]]: # noqa
-    f_intervals = []
-    for i, overlap in enumerate(overlaps):
-        prev_el = overlaps[i - 1] if i > 0 else None
-        next_el = overlaps[i + 1] if i < len(overlaps) - 1 else None
-
-        # check if there are false matches before the overlap
-        if interval.begin < overlap.begin:
-            fn_start = interval.begin
-            # check if interval is already covered by a previous overlap
-            if prev_el and interval.begin < prev_el.end:
-                fn_start = prev_el.end
-            f_intervals.append([fn_start, overlap.begin])
-
-        # check if there are false matches after the overlap
-        if interval.end > overlap.end:
-            fn_end = interval.end
-            # check if interval is already covered by a succeeding overlap
-            if next_el and interval.end > next_el.begin:
-                # skip because this will be handled by the next iteration
-                continue
-                # fn_end = next_el.begin
-            f_intervals.append([overlap.end, fn_end])
-
-    return f_intervals"""
-
-
 def plot_categorized_intervals(
     gsd_list_detected: pd.DataFrame, gsd_list_reference: pd.DataFrame, categorized_intervals: pd.DataFrame
 ) -> Figure:
