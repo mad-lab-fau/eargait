@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "eargait"
-version = "3.0.0"
+version = "3.1.0"
 description = "*Eargait* provides a set of algorithms and functions to process IMU data recorded with ear-worn IMU sensors and to estimate characteristic gait parameters. "
 authors = ["Ann-Kristin Seifer <ann-kristin.seifer@fau.de>",
             "Arne Küderle <arne.kuederle@fau.de>"]
@@ -9,10 +9,10 @@ homepage = "https://github.com/mad-lab-fau/eargait"
 repository = "https://github.com/mad-lab-fau/eargait"
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.12"
+python = ">=3.10,<3.12"
 joblib = ">=1.2.0"
 tpcp = ">=0.30.3, <1.0.0"
-scipy = "^1, !=1.6.0"
+scipy = "^1.14, !=1.6.0"
 scikit-learn = "1.2.0"
 pyts = "^0.11.0"
 nilspodlib = "^3.2.2"
@@ -34,7 +34,8 @@ tensorflow-io-gcs-filesystem = [
 ]
 torch = ">=2.0.0, !=2.0.1, !=2.1.0, <2.3.0"
 imbalanced-learn = "0.8.1"
-pytorch-lightning = "1.5.3"
+#pytorch-lightning = "1.5.3"
+pytorch-lightning = "^2.0.0"
 intervaltree = "3.1.0"
 
 [tool.poetry.dev-dependencies]
