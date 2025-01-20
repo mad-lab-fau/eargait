@@ -6,7 +6,7 @@ from typing import Dict, TypeVar, Union
 import numpy as np
 import pandas as pd
 from scipy import signal
-from scipy.integrate import cumtrapz
+from scipy.integrate import cumulative_trapezoid
 
 from eargait.spatial_params.spatial_params_base import SpatialParamsBase
 from eargait.utils.helper_datatype import EventList, is_event_list
@@ -96,8 +96,8 @@ class SpatialParamsInvertedPendulum(SpatialParamsBase):
         spatio = pd.Series(index=event_list.index)
         start_index = filtered_data.index[0]
 
-        velocity = cumtrapz(filtered_data["acc_si"].to_numpy(), dx=1 / self.sample_rate_hz)
-        position = cumtrapz(velocity, dx=1 / self.sample_rate_hz)
+        velocity = cumulative_trapezoid(filtered_data["acc_si"].to_numpy(), dx=1 / self.sample_rate_hz)
+        position = cumulative_trapezoid(velocity, dx=1 / self.sample_rate_hz)
         position_filtered = self._high_pass_filter_array(position, cut_off=0.1, nyq_fs=self.sample_rate_hz / 2, order=4)
         for s_id in range(1, event_list.shape[0]):
             start = event_list["ic"].to_numpy()[s_id - 1] - start_index
