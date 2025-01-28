@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "eargait"
-version = "3.3.0"
+version = "3.4.0"
 description = "*Eargait* provides a set of algorithms and functions to process IMU data recorded with ear-worn IMU sensors and to estimate characteristic gait parameters. "
 authors = ["Ann-Kristin Seifer <ann-kristin.seifer@fau.de>",
             "Arne Küderle <arne.kuederle@fau.de>"]
@@ -17,9 +17,8 @@ scikit-learn = "1.2.0"
 pyts = "^0.11.0"
 nilspodlib = "^3.2.2"
 fau-colors = "^1.0.1"
-signialib = "^2.8.0"
+signialib = "2.11.0"
 matplotlib = "^3.5.2, <3.9.0"
-pandas = ">=1.5.2, <2.2.3"
 tensorflow = "^2.10.0, <2.17.0"
 numba =  [
     {version = ">=0.55"},

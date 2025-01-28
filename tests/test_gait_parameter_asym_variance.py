@@ -33,9 +33,10 @@ def _dummy_spatiotemp_list():
     return r
 
 
-class TestImport(TestCase):
-    def test_temporal_parameter_estimation(self):
-        event_list = load_pickle(HERE.joinpath("test_data/gait_events_diao_adapted.pkl"))
+class TestImport:
+    def test_temporal_parameter_estimation(self, snapshot):
+        # event_list1 = load_pickle(HERE.joinpath("test_data/gait_events_diao_adapted.pkl"))
+        event_list = {"right_sensor": pd.read_csv(HERE.joinpath("test_data/event_list_right.csv"), index_col=0)}
         ref_temp_params = pd.read_csv(HERE.joinpath("test_data/temporal_params_right_sensor.csv"), index_col=0)
         estimated_temp_params = get_temporal_params(event_list, 50)
         assert_frame_equal(estimated_temp_params["right_sensor"], ref_temp_params)
