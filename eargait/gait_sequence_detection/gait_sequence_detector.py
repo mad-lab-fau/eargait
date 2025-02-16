@@ -95,14 +95,21 @@ class GaitSequenceDetection(Algorithm):
         self.step_size_in_ms = 1500  # Default step size
         self.body_frame_coords = False
 
-        self.model_path = self._get_model()
-        self._load_trained_model()
+        self.model_path = None
+        self._trained_model = None
+
 
         self._window_length_samples = sample_rate * self.WINDOW_LENGTH
         self.activity_df = pd.DataFrame()
         self.data = pd.DataFrame()
         self.activity = ""
         super().__init__()
+
+    def _ensure_model_loaded(self):
+        """Load model only if haven't been loaded before."""
+        if self._trained_model is None:
+            self.model_path = self._get_model()
+            self._load_trained_model()
 
     def detect(self, data: SensorData, activity: Union[str, List[str]] = "walking") -> Self:
         """Find gait sequences or activity sequence in data.
@@ -130,6 +137,7 @@ class GaitSequenceDetection(Algorithm):
         Where x is the vertical acceleration, y is the ML acceleration (left-right), and z is the forward acceleration.
 
         """
+        self._ensure_model_loaded()
         self.data = data
 
         if isinstance(activity, str):
@@ -145,8 +153,8 @@ class GaitSequenceDetection(Algorithm):
                 "jogging, biking, walking, sitting, lying, jumping, stairs up, stairs down, stand or transition. \n"
             )
         # load model
-        self.model_path = self._get_model()
-        self._load_trained_model()
+        #self.model_path = self._get_model()
+        #self._load_trained_model()
 
         dataset_type = is_sensor_data(data, check_acc=True, check_gyr=False)
         # (dataset_type)
