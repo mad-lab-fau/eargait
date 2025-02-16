@@ -71,7 +71,7 @@ class MixedEventDetection(BaseEventDetection):
         raise Warning("Mixed event detection method is not fully implemented and hence not recommended to use.")
         self.window_length = window_length
         self.filter = filter
-        self.ssa = SingularSpectrumAnalysis(
+        """self.ssa = SingularSpectrumAnalysis(
             window_size=window_length, groups=[[0], [1], np.arange(2, window_length, 1)]
         )
 
@@ -82,10 +82,29 @@ class MixedEventDetection(BaseEventDetection):
             ripple_db = 60.0
             self.filter_order_N, beta = kaiserord(ripple_db, width)
             cutoff_hz = 5.0
+            self.filter_taps = firwin(self.filter_order_N, cutoff_hz / nyq_rate, window=("kaiser", beta))"""
+        self.ssa = None
+        self.filter_order_N = None
+        self.filter_taps = None
+
+    def _ensure_ssa_initialized(self):
+        """"""
+        if self.ssa is None:
+            self.ssa = SingularSpectrumAnalysis(
+                window_size=self.window_length,
+                groups=[[0], [1], np.arange(2, self.window_length, 1)]
+            )
+        if self.filter and self.filter_taps is None:
+            nyq_rate = self.sampling_rate_hz / 2.0
+            width = 2.0 / nyq_rate
+            ripple_db = 60.0
+            self.filter_order_N, beta = kaiserord(ripple_db, width)
+            cutoff_hz = 5.0
             self.filter_taps = firwin(self.filter_order_N, cutoff_hz / nyq_rate, window=("kaiser", beta))
 
     def _detect_single_dataset(self, data) -> Dict[str, pd.DataFrame]:
         """Detect gait events for a single sensor data set and put into correct output stride list."""
+        self._ensure_ssa_initialized()
 
         if self.filter:
             data = self._filter_data(data)
