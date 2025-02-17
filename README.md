@@ -131,13 +131,15 @@ poetry run poe <command name>
 If you use `Eargait` in your work, please report the version you used in the text. Additionally, please also cite the corresponding paper:
 
 ```
-[1] A. Seifer et al., "EarGait: Estimation of Temporal Gait Parameters from Hearing 
-Aid Integrated Inertial Sensors", in Sensors, vol. 23, no. 14, article 6565, 2023, 
-doi: 10.3390/s23146565.
+[1] A. Seifer, E. Dorschky, A. Küderle, H. Moradi, R. Hannemann, and B. Eskofier, 
+"EarGait: Estimation of Temporal Gait Parameters from Hearing Aid Integrated Inertial Sensors", 
+in Sensors, vol. 23, no. 14, article 6565, 2023, doi: 10.3390/s23146565.
 
-[2] A. Seifer et al., "Step Length and Gait Speed Estimation Using a Hearing Aid 
-Integrated Accelerometer: A Comparison of Different Algorithms", in IEEE Journal of Biomedical 
-and Health Informatics, vol. 28, no. 11, pp. 6619-6628, 2024, doi: 10.1109/JBHI.2024.3454824.
+
+[2] A. Seifer, A. Küderle, E. Dorschky, H. Moradi, R. Hannemann, and B. Eskofier,
+"Step Length and Gait Speed Estimation Using a Hearing Aid  Integrated Accelerometer: A Comparison
+of Different Algorithms", in IEEE Journal of Biomedical and Health Informatics, vol. 28, no. 11,
+pp. 6619-6628, 2024, doi: 10.1109/JBHI.2024.3454824.
 ```
 Links: <br />
 [[1] Seifer et al., (2023), Temporal Parameter Paper](https://doi.org/10.3390/s23146565) <br />
