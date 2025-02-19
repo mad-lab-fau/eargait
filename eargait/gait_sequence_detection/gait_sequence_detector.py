@@ -65,13 +65,13 @@ class GaitSequenceDetection(Algorithm):
     minimum_seq_length: int
 
     model_path: Path
-    labels = LABELS
     _trained_model: None
+
+    labels = LABELS
     _window_length_samples: int
 
     sequence_list_: Union[pd.DataFrame, Dict[str, pd.DataFrame]]
-    activity_df: pd.DataFrame = None
-
+    activity_df: pd.DataFrame
     data: SensorData
     activity: str
 
@@ -89,20 +89,13 @@ class GaitSequenceDetection(Algorithm):
         self.minimum_seq_length = minimum_seq_length
         self.criteria_order = criteria_order
 
-        # Defaults, possibly overrriden after loading of hyperparamterfile of used Model
         self.selected_coords = ["x", "y", "z"]  # Default coordinates
         self.window_length_in_ms = 3000  # Default window length
         self.step_size_in_ms = 1500  # Default step size
         self.body_frame_coords = False
-
-        self.model_path = None
         self._trained_model = None
+        # TODO do we want these as contrusctor arguments? if yes like sample rate etc --> exposed & tunable by gridsearch o.ä
 
-
-        self._window_length_samples = sample_rate * self.WINDOW_LENGTH
-        self.activity_df = pd.DataFrame()
-        self.data = pd.DataFrame()
-        self.activity = ""
         super().__init__()
 
     def _ensure_model_loaded(self):
@@ -138,6 +131,7 @@ class GaitSequenceDetection(Algorithm):
 
         """
         self._ensure_model_loaded()
+        self._window_length_samples = self.sample_rate * self.WINDOW_LENGTH
         self.data = data
 
         if isinstance(activity, str):

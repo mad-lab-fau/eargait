@@ -83,9 +83,9 @@ class MixedEventDetection(BaseEventDetection):
             self.filter_order_N, beta = kaiserord(ripple_db, width)
             cutoff_hz = 5.0
             self.filter_taps = firwin(self.filter_order_N, cutoff_hz / nyq_rate, window=("kaiser", beta))"""
-        self.ssa = None
-        self.filter_order_N = None
-        self.filter_taps = None
+        #self.ssa = None
+        #self.filter_order_N = None
+        #self.filter_taps = None  # not needed when already type hints in class body
 
     def _ensure_ssa_initialized(self):
         """"""
