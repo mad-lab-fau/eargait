@@ -65,13 +65,13 @@ class GaitSequenceDetection(Algorithm):
     minimum_seq_length: int
 
     model_path: Path
-    labels = LABELS
     _trained_model: None
+
+    labels = LABELS
     _window_length_samples: int
 
     sequence_list_: Union[pd.DataFrame, Dict[str, pd.DataFrame]]
-    activity_df: pd.DataFrame = None
-
+    activity_df: pd.DataFrame
     data: SensorData
     activity: str
 
@@ -79,30 +79,27 @@ class GaitSequenceDetection(Algorithm):
 
     def __init__(
         self,
-        sample_rate: int = 50,
+        sample_rate: int,
         strictness: int = 0,
         minimum_seq_length: int = 1,
         criteria_order: str = "strictness_first",
     ):
+        if sample_rate is None:
+            raise ValueError("Sample Rate Parameter needs to be set by User!") # when set to None, otherwise type error bc sample rate is req argument for gsd
         self.sample_rate = sample_rate
         self.strictness = strictness
         self.minimum_seq_length = minimum_seq_length
         self.criteria_order = criteria_order
 
-        # Defaults, possibly overrriden after loading of hyperparamterfile of used Model
-        self.selected_coords = ["x", "y", "z"]  # Default coordinates
-        self.window_length_in_ms = 3000  # Default window length
-        self.step_size_in_ms = 1500  # Default step size
-        self.body_frame_coords = False
+        self._trained_model = None
 
-        self.model_path = self._get_model()
-        self._load_trained_model()
-
-        self._window_length_samples = sample_rate * self.WINDOW_LENGTH
-        self.activity_df = pd.DataFrame()
-        self.data = pd.DataFrame()
-        self.activity = ""
         super().__init__()
+
+    def _ensure_model_loaded(self):
+        """Load model only if haven't been loaded before."""
+        if self._trained_model is None:
+            self.model_path = self._get_model()
+            self._load_trained_model()
 
     def detect(self, data: SensorData, activity: Union[str, List[str]] = "walking") -> Self:
         """Find gait sequences or activity sequence in data.
@@ -130,6 +127,8 @@ class GaitSequenceDetection(Algorithm):
         Where x is the vertical acceleration, y is the ML acceleration (left-right), and z is the forward acceleration.
 
         """
+        self._ensure_model_loaded()
+        self._window_length_samples = self.sample_rate * self.WINDOW_LENGTH
         self.data = data
 
         if isinstance(activity, str):
@@ -144,12 +143,8 @@ class GaitSequenceDetection(Algorithm):
                 "the following activities: "
                 "jogging, biking, walking, sitting, lying, jumping, stairs up, stairs down, stand or transition. \n"
             )
-        # load model
-        self.model_path = self._get_model()
-        self._load_trained_model()
 
         dataset_type = is_sensor_data(data, check_acc=True, check_gyr=False)
-        # (dataset_type)
         if dataset_type == "single":
             results = self._detect_single(data)
         else:
@@ -231,7 +226,7 @@ class GaitSequenceDetection(Algorithm):
                 sequence = self._ensure_minimum_length(sequence)
             if self.strictness != 0:
                 sequence = self._ensure_strictness(sequence)
-
+        sequence.index = sequence.index.astype(np.int64)
         return sequence
 
     def _ensure_strictness(self, seq: pd.DataFrame):
@@ -327,10 +322,18 @@ class GaitSequenceDetection(Algorithm):
         self.sample_rate = hyperparams.get(
             "hz", self.sample_rate
         )  # either hz value in models .yaml file or default = 50
-        self.selected_coords = hyperparams.get("selected_coords", self.selected_coords)
-        self.window_length_in_ms = hyperparams.get("window_length_in_ms", self.window_length_in_ms)
-        self.step_size_in_ms = hyperparams.get("step_size_in_ms", self.step_size_in_ms)
-        self.body_frame_coords = hyperparams.get("body_frame_coords", self.body_frame_coords)
+        self.selected_coords = hyperparams.get("selected_coords")
+        if self.selected_coords is None:
+            self.selected_coords = ["x", "y", "z"]  # Fallback to default if no coords available in yaml
+        self.window_length_in_ms = hyperparams.get("window_length_in_ms")
+        if self.window_length_in_ms is None:
+            self.window_length_in_ms = 3000  # Fallback to default if w length is not available in yaml
+        self.step_size_in_ms = hyperparams.get("step_size_in_ms")
+        if self.step_size_in_ms is None:
+            self.step_size_in_ms = 1500  # Fallback to default if step size is not available in yaml
+        self.body_frame_coords = hyperparams.get("body_frame_coords")
+        if self.body_frame_coords is None:
+            self.body_frame_coords = False # Fallback to False aka no body frame / gravity alignment is no value is given in Yaml)
 
         input_channels = hyperparams["input_channels"]
         checkpoint_path = list(self.model_path.joinpath("checkpoints").glob("*.ckpt"))
