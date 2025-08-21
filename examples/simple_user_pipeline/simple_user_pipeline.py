@@ -18,7 +18,6 @@ the background.
 from eargait.preprocessing import align_gravity_and_convert_ear_to_ebf, load
 from eargait.utils import TrimMeanGravityAlignment
 from eargait.utils.example_data import get_mat_example_data_path
-# TODO HIER SO LASSEN ODER DATENSATZ TRIMMEN UND EXTRA SPEICHERN, SODASS WIR HIER DAS "PREPROCESSING" NICHT IM EXAMPLE MIT DRINNE HABEN?
 # Load data
 sample_rate = 50
 data_path = get_mat_example_data_path()
@@ -28,7 +27,6 @@ session = load(data_path, target_sample_rate_hz=sample_rate, skip_calibration=Tr
 trim_method = TrimMeanGravityAlignment(sampling_rate_hz=sample_rate)
 ear_data = align_gravity_and_convert_ear_to_ebf(session, trim_method)
 ear_data = ear_data["left_sensor"]
-# TODO get example data single side function
 
 # %%
 # Initialize Gait Sequence Analyzer Pipeline
@@ -36,7 +34,7 @@ ear_data = ear_data["left_sensor"]
 #
 # Instantiate the pipeline with adjustable parameters for sequence detection and analysis.
 
-from eargait.typed import GaitSequenceAnalyzerPipeline
+from eargait.gait_sequence_analyzer_pipeline import GaitSequenceAnalyzerPipeline
 
 pipeline = GaitSequenceAnalyzerPipeline(sample_rate=sample_rate, strictness=0, min_seq_length=1)
 
@@ -46,7 +44,7 @@ pipeline = GaitSequenceAnalyzerPipeline(sample_rate=sample_rate, strictness=0, m
 #
 # Automatically detect gait sequences and compute gait parameters.
 
-pipeline.compute(ear_data)
+pipeline.compute(ear_data, activity="walking")
 # Display automatic detection results
 print("Automatically detected sequences and parameters:")
 print(pipeline.auto_sequence_list_)
@@ -64,7 +62,7 @@ import pandas as pd
 manual_sequences = pd.DataFrame(
     {
         "start": [1050, 1800, 2700, 3750, 4650, 5550, 6450, 7350],
-        "end": [1500, 2250, 3300, 4350, 5250, 6150, 7050, 7800],
+        "end": [1230, 2250, 3300, 4350, 5250, 6150, 7050, 7800],
     }
 )
 

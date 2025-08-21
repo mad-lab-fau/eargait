@@ -1,4 +1,4 @@
-"Combines Eargait and Gait Detection without the manual need for Looping"
+"""Combines Eargait and Gait Detection without the manual need for Looping"""
 from typing import Union, Dict, List
 import pandas as pd
 
@@ -7,55 +7,62 @@ from eargait.eargait import EarGait
 from eargait.event_detection import DiaoAdaptedEventDetection
 from eargait.spatial_params import SpatialParamsRandomForest
 
-"""
-    - Accept a single continuous IMU data stream (single‐sided).
-    - No looping by the user—handle everything inside your object.
-    - Internally, call existing “EarGait detection” method or logic.
-    - Detect where in the continuous stream the gait sequences are.
-    - Enforce or check that the user only passes data for one hearing aid.
-    - Throw an error if more than one sensor or channel is present
-    - Check data correctness as early as possible (e.g., required columns, sample rate).
-    - Return a clear error message if data doesn’t meet requirements.
-    - For each detected gait sequence, compute “average” gait parameters (e.g., average step time, stride time) no sub stuff for step level
-    - Return a concise result (gait sequence start/stop + average parameters).
 
-    One method call (e.g., my_new_detector.detect(data)).
-    Inside, run:
-        Gait detection over the entire IMU data.
-        Summarize the sequences.
-    Store results (e.g., sequence_list_, average_params_) as class attributes.
-"""
+class GaitSequenceAnalyzerLight:
+    """One-call combo of gait sequence detection (GSD) → EarGait.
 
+    Runs GSD on a continuous single-sensor IMU stream and applies EarGait per
+    detected segment to return per-sequence average temporal/spatial parameters.
 
-class Combi: # Namen überlegen -> gpt fragen
-    """"""
+    Parameters
+    ----------
+    sample_rate : int, default 50
+    strictness : int, default 0
+    min_seq_length : int, default 1
+        All values are in samples.
+
+    Attributes
+    ----------
+    sequence_list_ : pd.DataFrame
+    average_params_ : pd.DataFrame
+
+    Notes
+    -----
+    - Auto only (no manual `[start, end]` input).
+    - Fixed methods: DiaoAdaptedEventDetection + SpatialParamsRandomForest.
+    - Light validation; expects a single-sensor stream.
+    - Prefer `GaitSequenceAnalyzerPipeline` unless you specifically need this
+      lightweight one-call wrapper—the pipeline covers this and adds manual mode,
+      stronger validation, and swappable methods.
+
+    """
+
     sample_rate: int
     strictness: int
     min_seq_length: int
 
     sequence_list_: Union[pd.DataFrame, Dict[str, pd.DataFrame]]
+
     def __init__(
             self,
             sample_rate: int = 50,
             strictness: int = 0,
             min_seq_length: int = 1,):
-        """ Defaults"""
+        """Defaults"""
         self.sample_rate = sample_rate
         self.strictness = strictness
         self.min_seq_length = min_seq_length
-        #self.average_params_ = pd.DataFrame()
+        # self.average_params_ = pd.DataFrame()
 
         super().__init__()
 
-    def detect(self, data: pd.DataFrame,activity: Union[str, List[str]] = "walking") -> "Combi":
+    def detect(self, data: pd.DataFrame, activity: Union[str, List[str]] = "walking") -> "GaitSequenceAnalyzerLight":
         """"""
-        #self.validate_data(data)  # TODO - only one sided, etc --> error schmeißen
+        # self.validate_data(data)
         gsd = self._create_gsd()
         gsd.detect(data, activity=activity)
         self.sequence_list_ = gsd.sequence_list_
         self.average_params_ = self.run_eargait(data, self.sequence_list_)
-        # TODO for loop so klein wie möglich -> for loop wenige code / function there
-        # iterator object für eargait -> braucht keine for loop
         return self
 
     def run_eargait(self, data: pd.DataFrame,
@@ -64,9 +71,7 @@ class Combi: # Namen überlegen -> gpt fragen
         """"""
         avg_params = {}
 
-
         if isinstance(sequence_list, dict):
-            # TODO change since we only want to accept single side but currently with the example dataset ok
             if "left_sensor" in sequence_list:
                 seq_df = sequence_list["left_sensor"]
             elif "right_sensor" in sequence_list:
@@ -80,7 +85,7 @@ class Combi: # Namen überlegen -> gpt fragen
 
         for idx, seq in seq_df.iterrows():
             start, end = seq["start"], seq["end"]
-            seq_data = data_df.iloc[start:end] # Start and end times as before done
+            seq_data = data_df.iloc[start:end]
 
             # run eargait on the sequence for sliced datastream
             event_detection = DiaoAdaptedEventDetection(sample_rate_hz=self.sample_rate, window_length=self.sample_rate)
@@ -96,7 +101,6 @@ class Combi: # Namen überlegen -> gpt fragen
             temporal_avg = ear_gait.average_temporal_params
             spatial_avg = ear_gait.average_spatial_params
 
-            # TODO change with above, bc of dict behaviour
             if isinstance(temporal_avg, dict):
                 temporal_avg = temporal_avg.get("single_sensor")
             if isinstance(spatial_avg, dict):
@@ -115,8 +119,7 @@ class Combi: # Namen überlegen -> gpt fragen
         result_df = pd.DataFrame(avg_params)
         return result_df
 
-    #def validate_single_side_data(self):
-    #    """"""
+    # def validate_single_side_data(self):
 
     def _create_gsd(self) -> GaitSequenceDetection:
         gsd = GaitSequenceDetection(
