@@ -20,6 +20,10 @@ class TestImport:
         # gait_events_ground_truth = load_pickle(HERE.joinpath("test_data/gait_events_diao_orig.pkl"))
         # assert_frame_equal(gait_events["left_sensor"], gait_events_ground_truth["left_sensor"])
         # assert_frame_equal(gait_events["right_sensor"], gait_events_ground_truth["right_sensor"])
+        for side in ("left_sensor", "right_sensor"):
+            df = gait_events[side].copy()
+            df.index = df.index.astype("int64")
+            gait_events[side] = df
         snapshot.assert_match(gait_events["left_sensor"], "gait_events_diao_orig_left")
         snapshot.assert_match(gait_events["right_sensor"], "gait_events_diao_orig_right")
 
@@ -31,5 +35,9 @@ class TestImport:
         # gait_events_ground_truth = load_pickle(HERE.joinpath("test_data/gait_events_diao_adapted.pkl"))
         # assert_frame_equal(gait_events["left_sensor"], gait_events_ground_truth["left_sensor"])
         # assert_frame_equal(gait_events["right_sensor"], gait_events_ground_truth["right_sensor"])
+        for side in ("left_sensor", "right_sensor"):
+            df = gait_events[side].copy()
+            df.index = df.index.astype("int64")
+            gait_events[side] = df
         snapshot.assert_match(gait_events["left_sensor"], "gait_events_diao_adapted_left")
         snapshot.assert_match(gait_events["right_sensor"], "gait_events_diao_adapted_right")
