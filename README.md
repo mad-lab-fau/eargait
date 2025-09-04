@@ -131,15 +131,19 @@ poetry run poe <command name>
 If you use `Eargait` in your work, please report the version you used in the text. Additionally, please also cite the corresponding paper:
 
 ```
-[1] Seifer et al., "EarGait: estimation of temporal gait parameters from hearing aid 
+[1] Seifer, Ann-Kristin, et al., "EarGait: estimation of temporal gait parameters from hearing aid 
 integrated inertial sensors." Sensors 23(14), 2023. https://doi.org/10.3390/s23146565.
 
-[2] PREPRINT Seifer et al., (2023). Step length and gait speed estimation using a hearing aid 
-integrated accelerometer: A comparison of different algorithms.
+[2] Seifer, Ann-Kristin, et al. "Step length and gait speed estimation using a hearing aid integrated accelerometer: A comparison of different algorithms." IEEE Journal of Biomedical and Health Informatics (2024). DOI: 10.1109/JBHI.2024.3454824.
+
+[3] Seifer, Ann-Kristin, et al. "Fully automated gait analysis with earables: Evaluation of an End2End
+pipeline with hearing-aid integrated accelerometers." 47th Annual International Conference of the IEEE Engineering in Medicine and Biology Society (EMBC), 2025. --> ACCEPTED, SOON TO BE PUBLISHED
 ```
 Links: <br />
 [[1] Seifer et al., (2023), Temporal Parameter Paper](https://doi.org/10.3390/s23146565) <br />
-[[2] Seifer et al., (2023); Spatial Parameter Paper](https://www.techrxiv.org/articles/preprint/Step_length_and_gait_speed_estimation_using_a_hearing_aid_integrated_accelerometer_A_comparison_of_different_algorithms/24182496) --> PREPRINT
+[[2] Seifer et al., (2024); Spatial Parameter Paper](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=10666280) <br />
+[[3] Seifer et al., (2025); End2End Pipeline Paper]() <br />
+
 
 
 ## Acknowledgement
