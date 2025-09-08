@@ -86,7 +86,7 @@ class JarchiEventDetection(BaseEventDetection):
         message = "Jarchi event detection method is not fully implemented and hence not recommended to use."
         warnings.warn(message)
 
-        super(JarchiEventDetection, self).__init__()  # noqa
+        super(JarchiEventDetection, self).__init__() # noqa
         self.window_length = window_length
         self.sampling_rate_hz = sampling_rate_hz
         self.ssa = SingularSpectrumAnalysis(
