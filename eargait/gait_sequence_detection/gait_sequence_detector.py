@@ -340,7 +340,7 @@ class GaitSequenceDetection(Algorithm):
             )
 
         # Get the trained model
-        trained_model = HARPredictor.load_from_checkpoint(
+        trained_model = HARPredictor.load_from_checkpoint(  # noqa
             checkpoint_path[0],
             input_channels=input_channels,
             num_classes=len(LABELS),

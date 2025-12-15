@@ -55,3 +55,4 @@ pylint:
     - protected-access
     - too-many-lines
     - missing-function-docstring
+    - too-many-positional-arguments
