@@ -111,7 +111,7 @@ class DiaoEventDetection(BaseEventDetection):
         data = self._filter_data(data)
 
         acc = data[BF_ACC]
-        assert acc.shape[0] > 3 * self.sample_rate_hz, "Walking Bout length must be greater than 3 seconds."
+        assert acc.shape[0] >= 2 * self.sample_rate_hz, "Walking Bout length must be greater than 2 seconds."
 
         # find events
         event_detection_func = self._select_all_event_detection_method()

@@ -245,6 +245,9 @@ class TestGaitSequenceDetector:
             strict_seq_mat["end"] - strict_seq_mat["start"] >= self.gsd._window_length_samples
         ), "Sequences should be at least one window length"
 
+        original_seq_mat.index = original_seq_mat.index.astype("int64", copy=False)
+        strict_seq_mat.index = strict_seq_mat.index.astype("int64", copy=False)
+
         snapshot.assert_match(original_seq_mat, "original_seq_mat")
         snapshot.assert_match(strict_seq_mat, "strict_seq_mat")
         snapshot.assert_match(
